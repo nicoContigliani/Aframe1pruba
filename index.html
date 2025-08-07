@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Imagen Flotante 3D con A-Frame</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            font-family: Arial;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mensaje informativo -->
+    <div id="info">
+        Mueve el ratón para mirar alrededor<br>
+        Usa WASD o flechas para moverte
+    </div>
+
+    <a-scene>
+        <!-- Imagen flotante con imagen de respaldo por si falla -->
+        <a-image 
+            src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553"  <!-- Imagen de prueba -->
+            onerror="fallbackImage(this)"
+            position="0 5.5 2"
+            width="1.5"
+            height="1"
+            animation="property: position; to: 0 2 -2; dir: alternate; loop: true; dur: 2000"
+            animation__rotation="property: rotation; to: 0 360 0; loop: true; dur: 10000"
+            shadow>
+        </a-image>
+
+        <!-- Suelo con textura -->
+        <a-plane 
+            position="0 -1 -4" 
+            rotation="-90 0 0" 
+            width="10" 
+            height="10" 
+            src="https://cdn.aframe.io/a-painter/images/grid.png"
+            repeat="10 10"
+            shadow>
+        </a-plane>
+
+        <!-- Cielo -->
+        <a-sky color="#ECECEC"></a-sky>
+
+        <!-- Cámara con movimiento WASD -->
+        <a-entity 
+            position="0 1.6 4"
+            movement-controls="fly: true; speed: 0.5">
+            <a-entity 
+                camera 
+                look-controls 
+                mouse-enabled="true"
+                wasd-controls-enabled="false">
+            </a-entity>
+        </a-entity>
+
+        <!-- Luces mejoradas -->
+        <a-entity light="type: ambient; color: #888"></a-entity>
+        <a-entity light="type: directional; color: #FFF; intensity: 0.8" 
+                 position="-0.5 3 0" cast-shadow></a-entity>
+
+        <!-- Texto flotante como ayuda -->
+        <a-text value="Imagen flotante 3D" 
+                position="0 2.5 -2" 
+                align="center"
+                color="#333"
+                width="5">
+        </a-text>
+    </a-scene>
+
+    <script>
+        // Función de respaldo si falla la imagen
+        function fallbackImage(element) {
+            console.warn("No se pudo cargar la imagen, usando respaldo");
+            element.setAttribute('src', 'https://cdn.aframe.io/test-mono-compat.png');
+            element.setAttribute('material', 'color', '#FFF');
+            
+            // Crear mensaje de error visible
+            const errorText = document.createElement('a-text');
+            errorText.setAttribute('value', 'Error: Imagen no encontrada\nUsando imagen de prueba');
+            errorText.setAttribute('position', '0 1 -2');
+            errorText.setAttribute('align', 'center');
+            errorText.setAttribute('color', 'red');
+            errorText.setAttribute('width', '3');
+            element.parentNode.appendChild(errorText);
+        }
+    </script>
+</body>
+</html>
