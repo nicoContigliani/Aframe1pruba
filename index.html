@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Imagen Flotante AR - Realidad Aumentada</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
@@ -20,6 +20,7 @@
             overflow: hidden;
             background: transparent;
             font-family: 'Courier New', monospace;
+            touch-action: none;
         }
         
         a-scene {
@@ -31,23 +32,27 @@
         .ar-overlay {
             position: fixed;
             top: 20px;
-            left: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #00ffff;
             background: rgba(0, 0, 0, 0.85);
-            padding: 15px 20px;
+            padding: 12px 15px;
             border-radius: 12px;
             z-index: 1000;
             border: 2px solid #00ffff;
             backdrop-filter: blur(15px);
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
-            max-width: 280px;
+            max-width: 90%;
+            width: auto;
+            text-align: center;
         }
         
         .ar-status {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: bold;
             font-size: 14px;
         }
@@ -71,44 +76,6 @@
             font-size: 11px;
             color: #aaaaaa;
             line-height: 1.5;
-        }
-        
-        .ar-frame {
-            position: fixed;
-            width: 50px;
-            height: 50px;
-            border: 3px solid #00ffff;
-            pointer-events: none;
-            z-index: 999;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-        }
-        
-        .ar-frame.top-left {
-            top: 15px;
-            left: 15px;
-            border-right: none;
-            border-bottom: none;
-        }
-        
-        .ar-frame.top-right {
-            top: 15px;
-            right: 15px;
-            border-left: none;
-            border-bottom: none;
-        }
-        
-        .ar-frame.bottom-left {
-            bottom: 15px;
-            left: 15px;
-            border-right: none;
-            border-top: none;
-        }
-        
-        .ar-frame.bottom-right {
-            bottom: 15px;
-            right: 15px;
-            border-left: none;
-            border-top: none;
         }
         
         .loading-screen {
@@ -144,10 +111,11 @@
         }
         
         .loading-text {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             text-align: center;
             animation: glow 2s ease-in-out infinite alternate;
+            padding: 0 20px;
         }
         
         @keyframes glow {
@@ -158,77 +126,36 @@
         .error-message {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(255, 0, 0, 0.9);
             color: white;
-            padding: 15px;
+            padding: 12px 15px;
             border-radius: 8px;
             z-index: 1001;
             display: none;
-            max-width: 300px;
+            max-width: 90%;
+            width: auto;
             border: 2px solid #ff0000;
-        }
-        
-        .crosshair {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 30px;
-            height: 30px;
-            border: 2px solid #00ffff;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 998;
-            opacity: 0.7;
-            animation: crosshairPulse 3s infinite;
-        }
-        
-        .crosshair::before,
-        .crosshair::after {
-            content: '';
-            position: absolute;
-            background: #00ffff;
-        }
-        
-        .crosshair::before {
-            width: 2px;
-            height: 10px;
-            top: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .crosshair::after {
-            width: 10px;
-            height: 2px;
-            top: 50%;
-            left: -5px;
-            transform: translateY(-50%);
-        }
-        
-        @keyframes crosshairPulse {
-            0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            text-align: center;
         }
         
         @media (max-width: 768px) {
             .ar-overlay {
                 top: 10px;
-                left: 10px;
-                right: 10px;
-                max-width: none;
-                padding: 12px;
+                padding: 10px 12px;
             }
             
-            .ar-frame {
-                width: 35px;
-                height: 35px;
-                border-width: 2px;
+            .ar-status {
+                font-size: 12px;
             }
             
             .ar-instructions {
                 font-size: 10px;
+            }
+            
+            .loading-text {
+                font-size: 14px;
             }
         }
     </style>
@@ -248,22 +175,10 @@
             <span>REALIDAD AUMENTADA ACTIVA</span>
         </div>
         <div class="ar-instructions">
-            🖱️ Arrastra para rotar la vista<br>
-            🔍 Scroll para hacer zoom<br>
-            📱 WASD o flechas para moverte<br>
-            🎯 R = Reset | F = Enfocar<br>
-            👆 Click en imagen para interactuar
+            👆 Toca la pantalla para enfocar<br>
+            📷 Mueve el dispositivo para explorar
         </div>
     </div>
-
-    <!-- Marcos de esquina AR -->
-    <div class="ar-frame top-left"></div>
-    <div class="ar-frame top-right"></div>
-    <div class="ar-frame bottom-left"></div>
-    <div class="ar-frame bottom-right"></div>
-
-    <!-- Crosshair central -->
-    <div class="crosshair"></div>
 
     <!-- Mensaje de error -->
     <div id="errorMessage" class="error-message">
@@ -273,8 +188,8 @@
     <!-- Escena A-Frame con AR.js -->
     <a-scene 
         vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true; alpha: true"
-        arjs="sourceType: webcam; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720; debugUIEnabled: false; cameraParametersUrl: https://raw.githubusercontent.com/jeromeetienne/ar.js/master/data/data/camera_para.dat"
+        renderer="logarithmicDepthBuffer: true; alpha: true; precision: medium"
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; cameraParametersUrl: https://raw.githubusercontent.com/jeromeetienne/ar.js/master/data/data/camera_para.dat"
         embedded>
 
         <!-- Cámara AR -->
@@ -286,29 +201,28 @@
             <img id="fallbackTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
         </a-assets>
 
-        <!-- Imagen principal flotante con animaciones mejoradas -->
+        <!-- Imagen principal centrada y responsive -->
         <a-image 
             id="mainImage"
             src="#mainTexture"
             transparent="true"
             alpha-test="0.05"
-            position="0 0.5 -1"
-            width="0.8"
-            height="0.8"
+            position="0 0 -1"
+            width="0.6"
+            height="0.6"
             material="transparent: true; alphaTest: 0.05; side: double; shader: standard"
-            animation__float="property: position; to: 0 0.8 -1; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine"
+            animation__float="property: position; to: 0 0.2 -1; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine"
             animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 25000; easing: linear"
-            animation__scale="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
-            animation__wobble="property: rotation; to: 8 0 8; dir: alternate; loop: true; dur: 7000; easing: easeInOutSine"
+            animation__scale="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
             shadow="receive: false; cast: true"
             class="interactive">
         </a-image>
 
-        <!-- Anillo holográfico principal -->
+        <!-- Anillo holográfico principal centrado -->
         <a-ring 
-            position="0 0.3 -1"
-            radius-inner="0.6"
-            radius-outer="0.7"
+            position="0 0 -1"
+            radius-inner="0.4"
+            radius-outer="0.5"
             color="#00ffff"
             material="transparent: true; opacity: 0.5; side: double; shader: standard"
             rotation="-90 0 0"
@@ -316,11 +230,11 @@
             animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 18000; easing: linear">
         </a-ring>
 
-        <!-- Anillo holográfico secundario -->
+        <!-- Anillo holográfico secundario centrado -->
         <a-ring 
-            position="0 0.3 -1"
-            radius-inner="0.8"
-            radius-outer="0.9"
+            position="0 0 -1"
+            radius-inner="0.55"
+            radius-outer="0.6"
             color="#ffffff"
             material="transparent: true; opacity: 0.2; side: double"
             rotation="-90 0 0"
@@ -328,43 +242,36 @@
             animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 12000; easing: linear">
         </a-ring>
 
-        <!-- Partículas ambientales -->
+        <!-- Partículas ambientales reducidas -->
         <a-entity 
-            position="0 0.5 -1"
-            particle-system="preset: snow; color: #00ffff, #ffffff, #88ccff; particleCount: 100; size: 0.1, 0.3; maxAge: 12; accelerationValue: 0 -0.02 0; velocityValue: 0 0 0; accelerationSpread: 1 0 1; velocitySpread: 0.5 0.5 0.5">
+            position="0 0 -1"
+            particle-system="preset: snow; color: #00ffff, #ffffff, #88ccff; particleCount: 50; size: 0.05, 0.15; maxAge: 10; accelerationValue: 0 -0.01 0; velocityValue: 0 0 0; accelerationSpread: 0.5 0 0.5; velocitySpread: 0.3 0.3 0.3">
         </a-entity>
 
-        <!-- Efectos de luz mejorados -->
+        <!-- Efectos de luz optimizados -->
         <a-entity 
             light="type: ambient; color: #505050; intensity: 0.7">
         </a-entity>
         
         <a-entity 
-            light="type: directional; color: #ffffff; intensity: 1.8; castShadow: true" 
-            position="2 3 1"
-            shadow="type: pcfSoft; mapSize: 2048 2048; bias: -0.0001">
+            light="type: directional; color: #ffffff; intensity: 1.5; castShadow: true" 
+            position="1 2 0.5">
         </a-entity>
         
         <a-entity 
-            light="type: point; color: #00ffff; intensity: 1.2; distance: 5; decay: 1" 
-            position="1 1 -0.5"
-            animation__pulse="property: light.intensity; to: 1.8; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
-        </a-entity>
-
-        <a-entity 
-            light="type: point; color: #ff88cc; intensity: 0.8; distance: 4; decay: 1" 
-            position="-1 0.5 -1.5"
-            animation__pulse2="property: light.intensity; to: 1.2; dir: alternate; loop: true; dur: 3500; easing: easeInOutSine">
+            light="type: point; color: #00ffff; intensity: 1.0; distance: 3; decay: 1" 
+            position="0.5 0.5 -0.3"
+            animation__pulse="property: light.intensity; to: 1.5; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
         </a-entity>
 
         <!-- Texto de error (oculto por defecto) -->
         <a-text 
             id="errorText"
             value="⚠️ IMAGEN DE RESPALDO CARGADA\nLa imagen principal no pudo cargarse"
-            position="0 0.2 -1"
+            position="0 -0.3 -1"
             align="center"
             color="#ff4444"
-            width="2"
+            width="1.8"
             visible="false"
             material="transparent: true; opacity: 0.9"
             animation__blink="property: material.opacity; to: 0.4; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine">
@@ -397,7 +304,7 @@
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
                     }, 1000);
-                }, 2500);
+                }, 2000);
             });
 
             // Manejo de carga exitosa de imagen
@@ -455,137 +362,101 @@
                 console.log('👆 Click en imagen detectado');
                 
                 // Efecto de click - escala y rotación
-                this.setAttribute('animation__click', 'property: scale; to: 1.4 1.4 1.4; dur: 300; easing: easeOutElastic');
+                this.setAttribute('animation__click', 'property: scale; to: 1.2 1.2 1.2; dur: 300; easing: easeOutElastic');
                 this.setAttribute('animation__clickRotate', 'property: rotation; to: 0 90 0; dur: 300; easing: easeOutQuad');
                 
                 setTimeout(() => {
                     this.removeAttribute('animation__click');
                     this.removeAttribute('animation__clickRotate');
                 }, 300);
-                
-                // Efecto de partículas en click
-                createClickEffect(this.getAttribute('position'));
             });
 
-            // Efectos de hover
-            mainImage.addEventListener('mouseenter', function() {
-                this.setAttribute('animation__hover', 'property: material.opacity; to: 0.8; dur: 400; easing: easeInOutQuad');
-                document.body.style.cursor = 'pointer';
+            // Manejo de errores globales
+            window.addEventListener('error', function(e) {
+                console.warn('⚠️ Error capturado:', e.message);
             });
 
-            mainImage.addEventListener('mouseleave', function() {
-                this.setAttribute('animation__hover', 'property: material.opacity; to: 1.0; dur: 400; easing: easeInOutQuad');
-                document.body.style.cursor = 'default';
-            });
-
-            // Función para crear efecto de partículas en click
-            function createClickEffect(position) {
-                const clickEffect = document.createElement('a-entity');
-                clickEffect.setAttribute('position', position);
-                clickEffect.setAttribute('particle-system', 
-                    'preset: default; color: #00ffff, #ffffff; particleCount: 30; size: 0.05, 0.2; maxAge: 2; accelerationValue: 0 2 0; velocityValue: 0 0 0; accelerationSpread: 2 2 2'
-                );
+            // Optimización para móviles
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones');
                 
-                scene.appendChild(clickEffect);
-                
-                // Remover efecto después de 3 segundos
-                setTimeout(() => {
-                    scene.removeChild(clickEffect);
-                }, 3000);
-            }
-
-            // Información de debug y ayuda
-            console.log('📋 CONTROLES DISPONIBLES:');
-            console.log('   🖱️  Ratón: Rotar vista');
-            console.log('   👆  Click en imagen: Efecto de interacción');
-            console.log('✨ Sistema AR completamente inicializado');
-        });
-
-        // Manejo de errores globales
-        window.addEventListener('error', function(e) {
-            console.warn('⚠️ Error capturado:', e.message);
-        });
-
-        // Optimización para móviles
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones');
-            
-            // Reducir calidad de partículas en móviles
-            document.addEventListener('DOMContentLoaded', function() {
+                // Reducir calidad de partículas en móviles
                 const particles = document.querySelector('[particle-system]');
                 if (particles) {
-                    particles.setAttribute('particle-system', 'particleCount: 50');
+                    particles.setAttribute('particle-system', 'particleCount: 30');
                 }
-            });
-        }
+                
+                // Ajustar tamaño de imagen para móviles
+                mainImage.setAttribute('width', '0.5');
+                mainImage.setAttribute('height', '0.5');
+            }
 
-        // Solicitar permiso de cámara trasera
-        function requestRearCamera() {
-            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-                navigator.mediaDevices.enumerateDevices()
-                    .then(devices => {
-                        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                        if (videoDevices.length > 1) {
-                            console.log('📷 Dispositivos de cámara encontrados:', videoDevices);
-                            
-                            const constraints = {
-                                video: {
-                                    facingMode: { exact: "environment" },
-                                    width: { ideal: 1280 },
-                                    height: { ideal: 720 }
-                                }
-                            };
-                            
-                            navigator.mediaDevices.getUserMedia(constraints)
-                                .then(stream => {
-                                    console.log('✅ Cámara trasera activada');
-                                })
-                                .catch(err => {
-                                    console.warn('⚠️ No se pudo acceder a la cámara trasera:', err);
-                                    // Intentar con cámara frontal si la trasera falla
-                                    fallbackToFrontCamera();
-                                });
-                        } else {
-                            console.log('📷 Solo una cámara disponible, usando esa');
+            // Solicitar permiso de cámara trasera
+            function requestRearCamera() {
+                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                    navigator.mediaDevices.enumerateDevices()
+                        .then(devices => {
+                            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                            if (videoDevices.length > 1) {
+                                console.log('📷 Dispositivos de cámara encontrados:', videoDevices);
+                                
+                                const constraints = {
+                                    video: {
+                                        facingMode: { exact: "environment" },
+                                        width: { ideal: 1280 },
+                                        height: { ideal: 720 }
+                                    }
+                                };
+                                
+                                navigator.mediaDevices.getUserMedia(constraints)
+                                    .then(stream => {
+                                        console.log('✅ Cámara trasera activada');
+                                    })
+                                    .catch(err => {
+                                        console.warn('⚠️ No se pudo acceder a la cámara trasera:', err);
+                                        fallbackToFrontCamera();
+                                    });
+                            } else {
+                                console.log('📷 Solo una cámara disponible, usando esa');
+                                fallbackToFrontCamera();
+                            }
+                        })
+                        .catch(err => {
+                            console.warn('⚠️ Error al enumerar dispositivos:', err);
                             fallbackToFrontCamera();
-                        }
+                        });
+                } else {
+                    console.warn('⚠️ API de dispositivos no soportada');
+                    fallbackToFrontCamera();
+                }
+            }
+
+            function fallbackToFrontCamera() {
+                const constraints = {
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                };
+                
+                navigator.mediaDevices.getUserMedia(constraints)
+                    .then(stream => {
+                        console.log('✅ Cámara frontal activada como respaldo');
                     })
                     .catch(err => {
-                        console.warn('⚠️ Error al enumerar dispositivos:', err);
-                        fallbackToFrontCamera();
+                        console.error('❌ No se pudo acceder a ninguna cámara:', err);
                     });
-            } else {
-                console.warn('⚠️ API de dispositivos no soportada');
-                fallbackToFrontCamera();
             }
-        }
 
-        function fallbackToFrontCamera() {
-            const constraints = {
-                video: {
-                    facingMode: "user",
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                }
-            };
-            
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    console.log('✅ Cámara frontal activada como respaldo');
-                })
-                .catch(err => {
-                    console.error('❌ No se pudo acceder a ninguna cámara:', err);
-                });
-        }
+            // Solicitar cámara al cargar
+            requestRearCamera();
 
-        // Solicitar cámara al cargar
-        document.addEventListener('DOMContentLoaded', requestRearCamera);
-
-        // Mensaje de bienvenida
-        setTimeout(() => {
-            console.log('🎉 ¡Bienvenido a la experiencia de Realidad Aumentada!');
-            console.log('💡 Tip: Haz click en la imagen flotante para efectos especiales');
-        }, 3000);
+            // Mensaje de bienvenida
+            setTimeout(() => {
+                console.log('🎉 ¡Bienvenido a la experiencia de Realidad Aumentada!');
+            }, 3000);
+        });
     </script>
 </body>
 </html>
