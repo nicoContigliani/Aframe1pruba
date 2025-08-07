@@ -1,112 +1,614 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Imagen Flotante 3D con Transparencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imagen Flotante AR - Realidad Aumentada</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
             background: transparent;
+            font-family: 'Courier New', monospace;
         }
-        #info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            font-family: Arial;
-            z-index: 100;
-            border-radius: 5px;
-        }
+        
         a-scene {
             background: transparent !important;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        .ar-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #00ffff;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 15px 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            border: 2px solid #00ffff;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+            max-width: 280px;
+        }
+        
+        .ar-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.3); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .ar-instructions {
+            font-size: 11px;
+            color: #aaaaaa;
+            line-height: 1.5;
+        }
+        
+        .ar-frame {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border: 3px solid #00ffff;
+            pointer-events: none;
+            z-index: 999;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+        
+        .ar-frame.top-left {
+            top: 15px;
+            left: 15px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .ar-frame.top-right {
+            top: 15px;
+            right: 15px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .ar-frame.bottom-left {
+            bottom: 15px;
+            left: 15px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .ar-frame.bottom-right {
+            bottom: 15px;
+            right: 15px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #00ffff;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 255, 255, 0.3);
+            border-top: 4px solid #00ffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ffff; }
+            to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff; }
+        }
+        
+        .error-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1001;
+            display: none;
+            max-width: 300px;
+            border: 2px solid #ff0000;
+        }
+        
+        .crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 2px solid #00ffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 998;
+            opacity: 0.7;
+            animation: crosshairPulse 3s infinite;
+        }
+        
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: #00ffff;
+        }
+        
+        .crosshair::before {
+            width: 2px;
+            height: 10px;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .crosshair::after {
+            width: 10px;
+            height: 2px;
+            top: 50%;
+            left: -5px;
+            transform: translateY(-50%);
+        }
+        
+        @keyframes crosshairPulse {
+            0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        @media (max-width: 768px) {
+            .ar-overlay {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                padding: 12px;
+            }
+            
+            .ar-frame {
+                width: 35px;
+                height: 35px;
+                border-width: 2px;
+            }
+            
+            .ar-instructions {
+                font-size: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Mensaje informativo -->
-    <div id="info">
-        Mueve el ratón para mirar alrededor<br>
-        Usa WASD o flechas para moverte
+    <!-- Pantalla de carga -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="spinner"></div>
+        <div class="loading-text">INICIALIZANDO REALIDAD AUMENTADA...</div>
+        <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Cargando recursos 3D...</div>
     </div>
 
-    <a-scene background="color: transparent" renderer="alpha: true">
-        <!-- Imagen PNG con transparencia -->
+    <!-- Overlay de información AR -->
+    <div class="ar-overlay">
+        <div class="ar-status">
+            <div class="status-dot"></div>
+            <span>REALIDAD AUMENTADA ACTIVA</span>
+        </div>
+        <div class="ar-instructions">
+            🖱️ Arrastra para rotar la vista<br>
+            🔍 Scroll para hacer zoom<br>
+            📱 WASD o flechas para moverte<br>
+            🎯 R = Reset | F = Enfocar<br>
+            👆 Click en imagen para interactuar
+        </div>
+    </div>
+
+    <!-- Marcos de esquina AR -->
+    <div class="ar-frame top-left"></div>
+    <div class="ar-frame top-right"></div>
+    <div class="ar-frame bottom-left"></div>
+    <div class="ar-frame bottom-right"></div>
+
+    <!-- Crosshair central -->
+    <div class="crosshair"></div>
+
+    <!-- Mensaje de error -->
+    <div id="errorMessage" class="error-message">
+        ⚠️ Error al cargar la imagen principal. Usando imagen de respaldo.
+    </div>
+
+    <!-- Escena A-Frame -->
+    <a-scene 
+        background="color: transparent" 
+        renderer="alpha: true; antialias: true; colorManagement: true; sortObjects: true; precision: highp"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+        loading-screen="enabled: false">
+        
+        <!-- Assets -->
+        <a-assets>
+            <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
+            <img id="fallbackTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
+        </a-assets>
+
+        <!-- Imagen principal flotante con animaciones mejoradas -->
         <a-image 
-            src="https://cdn.aframe.io/test-mono-compat.png"  <!-- Cambia por tu imagen PNG con transparencia -->
+            id="mainImage"
+            src="#mainTexture"
             transparent="true"
-            alpha-test="0.5"
-            position="0 1.5 -2"
-            width="1.5"
-            height="1.5"
-            animation__position="property: position; to: 0 2 -2; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
-            animation__rotation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear"
-            animation__scale="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"
-            shadow="receive: false">
+            alpha-test="0.05"
+            position="0 1.8 -4"
+            width="3"
+            height="3"
+            material="transparent: true; alphaTest: 0.05; side: double; shader: standard"
+            animation__float="property: position; to: 0 2.5 -4; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine"
+            animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 25000; easing: linear"
+            animation__scale="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
+            animation__wobble="property: rotation; to: 8 0 8; dir: alternate; loop: true; dur: 7000; easing: easeInOutSine"
+            shadow="receive: false; cast: true"
+            class="interactive">
         </a-image>
 
-        <!-- Luces para mejor visualización -->
-        <a-entity light="type: ambient; color: #888; intensity: 0.8"></a-entity>
-        <a-entity light="type: directional; color: #FFF; intensity: 1.2" 
-                 position="-1 2 1" cast-shadow></a-entity>
-        <a-entity light="type: point; color: #88F; intensity: 0.5" 
-                 position="1 1 -1" distance="5" decay="1"></a-entity>
+        <!-- Anillo holográfico principal -->
+        <a-ring 
+            position="0 1.2 -4"
+            radius-inner="2.2"
+            radius-outer="2.6"
+            color="#00ffff"
+            material="transparent: true; opacity: 0.5; side: double; shader: standard"
+            rotation="-90 0 0"
+            animation__glow="property: material.opacity; to: 0.9; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine"
+            animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 18000; easing: linear">
+        </a-ring>
 
-        <!-- Cámara con movimiento suavizado -->
+        <!-- Anillo holográfico secundario -->
+        <a-ring 
+            position="0 1.2 -4"
+            radius-inner="2.8"
+            radius-outer="3.0"
+            color="#ffffff"
+            material="transparent: true; opacity: 0.2; side: double"
+            rotation="-90 0 0"
+            animation__glow2="property: material.opacity; to: 0.4; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
+            animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 12000; easing: linear">
+        </a-ring>
+
+        <!-- Partículas ambientales -->
         <a-entity 
-            position="0 1.6 3"
-            movement-controls="fly: true; speed: 0.3; constrainToNavMesh: false">
+            position="0 2 -4"
+            particle-system="preset: snow; color: #00ffff, #ffffff, #88ccff; particleCount: 200; size: 0.3, 0.8; maxAge: 12; accelerationValue: 0 -0.05 0; velocityValue: 0 0 0; accelerationSpread: 3 0 3; velocitySpread: 1 1 1">
+        </a-entity>
+
+        <!-- Efectos de luz mejorados -->
+        <a-entity 
+            light="type: ambient; color: #505050; intensity: 0.7">
+        </a-entity>
+        
+        <a-entity 
+            light="type: directional; color: #ffffff; intensity: 1.8; castShadow: true" 
+            position="8 12 6"
+            shadow="type: pcfSoft; mapSize: 4096 4096; bias: -0.0001">
+        </a-entity>
+        
+        <a-entity 
+            light="type: point; color: #00ffff; intensity: 1.2; distance: 15; decay: 1" 
+            position="3 4 -2"
+            animation__pulse="property: light.intensity; to: 1.8; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
+        </a-entity>
+
+        <a-entity 
+            light="type: point; color: #ff88cc; intensity: 0.8; distance: 12; decay: 1" 
+            position="-3 2 -6"
+            animation__pulse2="property: light.intensity; to: 1.2; dir: alternate; loop: true; dur: 3500; easing: easeInOutSine">
+        </a-entity>
+
+        <!-- Cámara con controles mejorados -->
+        <a-entity 
+            id="cameraRig"
+            position="0 1.8 5"
+            movement-controls="fly: true; speed: 0.5; constrainToNavMesh: false; acceleration: 25">
             <a-entity 
-                camera="fov: 70; near: 0.1; far: 1000"
-                look-controls="pointerLockEnabled: true"
-                wasd-controls="enabled: true">
+                camera="fov: 80; near: 0.1; far: 1000"
+                look-controls="pointerLockEnabled: false; touchEnabled: true; reverseMouseDrag: false"
+                wasd-controls="enabled: true; acceleration: 30"
+                mouse-cursor="">
             </a-entity>
         </a-entity>
 
-        <!-- Efecto de partículas para ambiente -->
-        <a-entity particle-system="preset: snow; color: #AAA; particleCount: 200"></a-entity>
+        <!-- Texto de error (oculto por defecto) -->
+        <a-text 
+            id="errorText"
+            value="⚠️ IMAGEN DE RESPALDO CARGADA\nLa imagen principal no pudo cargarse"
+            position="0 0.8 -4"
+            align="center"
+            color="#ff4444"
+            width="8"
+            visible="false"
+            material="transparent: true; opacity: 0.9"
+            animation__blink="property: material.opacity; to: 0.4; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine">
+        </a-text>
+
+        <!-- Grid holográfico de fondo -->
+        <a-plane 
+            position="0 0 -10"
+            width="30"
+            height="30"
+            color="#001133"
+            material="transparent: true; opacity: 0.15; side: double; wireframe: true"
+            geometry="primitive: plane; segmentsWidth: 30; segmentsHeight: 30"
+            animation__wave="property: rotation; to: 0 0 10; dir: alternate; loop: true; dur: 12000; easing: easeInOutSine">
+        </a-plane>
+
+        <!-- Elementos decorativos adicionales -->
+        <a-dodecahedron 
+            position="4 3 -6" 
+            radius="0.3" 
+            color="#00ffff" 
+            material="transparent: true; opacity: 0.3; wireframe: true"
+            animation__spin="property: rotation; to: 360 360 360; loop: true; dur: 20000; easing: linear">
+        </a-dodecahedron>
+
+        <a-octahedron 
+            position="-4 2.5 -5" 
+            radius="0.4" 
+            color="#ff88cc" 
+            material="transparent: true; opacity: 0.4; wireframe: true"
+            animation__spin="property: rotation; to: -360 360 -360; loop: true; dur: 15000; easing: linear">
+        </a-octahedron>
     </a-scene>
 
     <script>
-        // Configuración adicional para transparencia
-        document.querySelector('a-scene').addEventListener('loaded', function() {
-            const renderer = this.renderer;
-            renderer.sortObjects = true;
-            renderer.alpha = true;
-            renderer.setClearColor(0x000000, 0);
+        // Variables globales
+        let imageLoaded = false;
+        let fallbackUsed = false;
+
+        // Configuración inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando sistema de Realidad Aumentada...');
             
-            // Verificar si la imagen cargó correctamente
-            const image = document.querySelector('a-image');
-            image.addEventListener('loaded', function() {
-                console.log('Imagen cargada correctamente');
-                // Asegurar que la transparencia funcione
-                this.object3D.children[0].material.transparent = true;
-                this.object3D.children[0].material.needsUpdate = true;
-            });
+            const scene = document.querySelector('a-scene');
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainImage = document.getElementById('mainImage');
+            const errorText = document.getElementById('errorText');
+            const errorMessage = document.getElementById('errorMessage');
             
-            image.addEventListener('error', function() {
-                console.warn('Error al cargar la imagen');
-                fallbackImage(this);
+            // Configurar renderer para transparencia perfecta
+            scene.addEventListener('loaded', function() {
+                console.log('🎬 Escena A-Frame cargada');
+                
+                const renderer = this.renderer;
+                renderer.sortObjects = true;
+                renderer.alpha = true;
+                renderer.setClearColor(0x000000, 0);
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                
+                // Ocultar pantalla de carga con efecto
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    loadingScreen.style.transition = 'opacity 1s ease-out';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 1000);
+                }, 2500);
             });
+
+            // Manejo de carga exitosa de imagen
+            mainImage.addEventListener('materialtextureloaded', function() {
+                console.log('✅ Imagen principal cargada correctamente');
+                imageLoaded = true;
+                
+                // Configurar material para transparencia
+                if (this.object3D && this.object3D.children[0]) {
+                    const material = this.object3D.children[0].material;
+                    material.transparent = true;
+                    material.alphaTest = 0.05;
+                    material.needsUpdate = true;
+                }
+            });
+
+            // Manejo de errores de imagen
+            mainImage.addEventListener('error', function() {
+                console.warn('❌ Error al cargar imagen principal');
+                handleImageError(this);
+            });
+
+            // Verificar carga de imagen después de un tiempo
+            setTimeout(() => {
+                if (!imageLoaded && !fallbackUsed) {
+                    console.warn('⏰ Timeout de carga, usando imagen de respaldo');
+                    handleImageError(mainImage);
+                }
+            }, 5000);
+
+            // Función para manejar errores de imagen
+            function handleImageError(imageElement) {
+                if (fallbackUsed) return; // Evitar bucle infinito
+                
+                fallbackUsed = true;
+                console.log('🔄 Cambiando a imagen de respaldo...');
+                
+                // Cambiar a imagen de respaldo
+                imageElement.setAttribute('src', '#fallbackTexture');
+                imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double');
+                
+                // Mostrar mensajes de error
+                errorText.setAttribute('visible', 'true');
+                errorMessage.style.display = 'block';
+                
+                // Ocultar mensaje de error después de 8 segundos
+                setTimeout(() => {
+                    errorText.setAttribute('visible', 'false');
+                    errorMessage.style.display = 'none';
+                }, 8000);
+            }
+
+            // Efectos de interactividad mejorados
+            mainImage.addEventListener('click', function() {
+                console.log('👆 Click en imagen detectado');
+                
+                // Efecto de click - escala y rotación
+                this.setAttribute('animation__click', 'property: scale; to: 1.4 1.4 1.4; dur: 300; easing: easeOutElastic');
+                this.setAttribute('animation__clickRotate', 'property: rotation; to: 0 90 0; dur: 300; easing: easeOutQuad');
+                
+                setTimeout(() => {
+                    this.removeAttribute('animation__click');
+                    this.removeAttribute('animation__clickRotate');
+                }, 300);
+                
+                // Efecto de partículas en click
+                createClickEffect(this.getAttribute('position'));
+            });
+
+            // Efectos de hover
+            mainImage.addEventListener('mouseenter', function() {
+                this.setAttribute('animation__hover', 'property: material.opacity; to: 0.8; dur: 400; easing: easeInOutQuad');
+                document.body.style.cursor = 'pointer';
+            });
+
+            mainImage.addEventListener('mouseleave', function() {
+                this.setAttribute('animation__hover', 'property: material.opacity; to: 1.0; dur: 400; easing: easeInOutQuad');
+                document.body.style.cursor = 'default';
+            });
+
+            // Controles de teclado mejorados
+            document.addEventListener('keydown', function(event) {
+                const cameraRig = document.getElementById('cameraRig');
+                const key = event.key.toLowerCase();
+                
+                switch(key) {
+                    case 'r':
+                        console.log('🔄 Reseteando posición de cámara');
+                        cameraRig.setAttribute('animation', 'property: position; to: 0 1.8 5; dur: 1500; easing: easeInOutQuad');
+                        break;
+                        
+                    case 'f':
+                        console.log('🎯 Enfocando imagen');
+                        cameraRig.setAttribute('animation', 'property: position; to: 0 1.8 1.5; dur: 1200; easing: easeInOutQuad');
+                        break;
+                        
+                    case 'c':
+                        console.log('📷 Vista cenital');
+                        cameraRig.setAttribute('animation', 'property: position; to: 0 8 -4; dur: 1000; easing: easeInOutQuad');
+                        break;
+                        
+                    case 'escape':
+                        console.log('🏠 Vista por defecto');
+                        cameraRig.setAttribute('animation', 'property: position; to: 0 1.8 5; dur: 1000; easing: easeInOutQuad');
+                        break;
+                }
+            });
+
+            // Función para crear efecto de partículas en click
+            function createClickEffect(position) {
+                const clickEffect = document.createElement('a-entity');
+                clickEffect.setAttribute('position', position);
+                clickEffect.setAttribute('particle-system', 
+                    'preset: default; color: #00ffff, #ffffff; particleCount: 50; size: 0.1, 0.3; maxAge: 2; accelerationValue: 0 5 0; velocityValue: 0 0 0; accelerationSpread: 5 5 5'
+                );
+                
+                scene.appendChild(clickEffect);
+                
+                // Remover efecto después de 3 segundos
+                setTimeout(() => {
+                    scene.removeChild(clickEffect);
+                }, 3000);
+            }
+
+            // Información de debug y ayuda
+            console.log('📋 CONTROLES DISPONIBLES:');
+            console.log('   🖱️  Ratón: Rotar vista');
+            console.log('   ⌨️  WASD/Flechas: Mover cámara');
+            console.log('   🔄  R: Reset cámara');
+            console.log('   🎯  F: Enfocar imagen');
+            console.log('   📷  C: Vista cenital');
+            console.log('   🏠  ESC: Vista por defecto');
+            console.log('   👆  Click en imagen: Efecto de interacción');
+            console.log('✨ Sistema AR completamente inicializado');
         });
 
-        function fallbackImage(element) {
-            console.warn("No se pudo cargar la imagen, usando respaldo");
-            element.setAttribute('src', 'https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553');
-            element.setAttribute('material', 'transparent', 'true');
-            element.setAttribute('material', 'alphaTest', '0.5');
+        // Manejo de errores globales
+        window.addEventListener('error', function(e) {
+            console.warn('⚠️ Error capturado:', e.message);
+        });
+
+        // Optimización para móviles
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones');
             
-            const errorText = document.createElement('a-text');
-            errorText.setAttribute('value', 'Error: Imagen no encontrada\nUsando imagen de prueba');
-            errorText.setAttribute('position', '0 1 -2');
-            errorText.setAttribute('align', 'center');
-            errorText.setAttribute('color', 'red');
-            errorText.setAttribute('width', '3');
-            element.parentNode.appendChild(errorText);
+            // Reducir calidad de partículas en móviles
+            document.addEventListener('DOMContentLoaded', function() {
+                const particles = document.querySelector('[particle-system]');
+                if (particles) {
+                    particles.setAttribute('particle-system', 'particleCount: 100');
+                }
+            });
         }
+
+        // Prevenir zoom en móviles
+        document.addEventListener('touchmove', function(event) {
+            if (event.scale !== 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+
+        // Mensaje de bienvenida
+        setTimeout(() => {
+            console.log('🎉 ¡Bienvenido a la experiencia de Realidad Aumentada!');
+            console.log('💡 Tip: Haz click en la imagen flotante para efectos especiales');
+        }, 3000);
     </script>
 </body>
 </html>
