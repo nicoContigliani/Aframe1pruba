@@ -3,14 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Holograma Futurista AR - Experiencia Premium</title>
+    <title>Holograma AR Premium - Experiencia Futurista</title>
     
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     
     <style>
-        /* Estilos generales - Diseño futurista premium */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -21,9 +22,35 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            background: transparent;
-            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(ellipse at center, rgba(0, 20, 40, 0.8) 0%, rgba(0, 0, 0, 0.95) 100%);
+            font-family: 'Orbitron', monospace;
             touch-action: none;
+            position: relative;
+        }
+        
+        /* Fondo animado con partículas */
+        .background-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                radial-gradient(2px 2px at 20px 30px, #00ffff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(0, 255, 255, 0.5), transparent),
+                radial-gradient(1px 1px at 90px 40px, #ffffff, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.5), transparent),
+                radial-gradient(2px 2px at 160px 30px, #00ffff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 20s linear infinite;
+        }
+        
+        @keyframes sparkle {
+            from { transform: translateY(0px); }
+            to { transform: translateY(-100px); }
         }
         
         a-scene {
@@ -32,575 +59,702 @@
             height: 100% !important;
         }
         
-        /* Overlay AR - Estilo futurista minimalista */
-        .ar-overlay {
+        /* HUD Futurista */
+        .ar-hud {
             position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .hud-top {
+            position: absolute;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            color: #ffffff;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 12px 20px;
-            border-radius: 16px;
-            z-index: 1000;
-            border: 1px solid rgba(0, 196, 255, 0.5);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
-            max-width: 90%;
-            width: auto;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 100, 255, 0.1));
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            border-radius: 25px;
+            padding: 15px 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            color: #00ffff;
             text-align: center;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.5s ease;
-            opacity: 0;
-            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: hudGlow 3s ease-in-out infinite alternate;
         }
         
-        .ar-status {
+        @keyframes hudGlow {
+            from { 
+                box-shadow: 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
+                border-color: rgba(0, 255, 255, 0.6);
+            }
+            to { 
+                box-shadow: 0 0 50px rgba(0, 255, 255, 0.6), inset 0 0 30px rgba(0, 255, 255, 0.2);
+                border-color: rgba(0, 255, 255, 1);
+            }
+        }
+        
+        .status-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 8px;
+            font-size: 14px;
         }
         
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: #00ff9d;
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #00ff00, #00cc00);
             border-radius: 50%;
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 10px #00ff9d;
+            box-shadow: 0 0 20px #00ff00;
+            animation: quantumPulse 2s infinite;
         }
         
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes quantumPulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 1;
+                box-shadow: 0 0 20px #00ff00;
+            }
+            50% { 
+                transform: scale(1.5); 
+                opacity: 0.7;
+                box-shadow: 0 0 40px #00ff00, 0 0 60px #00ff00;
+            }
         }
         
-        .ar-instructions {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.5;
-            letter-spacing: 0.3px;
+        .hud-instructions {
+            font-size: 10px;
+            color: rgba(0, 255, 255, 0.8);
+            line-height: 1.4;
+            font-weight: 400;
         }
         
-        /* Pantalla de carga - Diseño futurista premium */
+        /* Esquinas futuristas */
+        .corner-ui {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(0, 255, 255, 0.4);
+            pointer-events: none;
+        }
+        
+        .corner-ui.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 0 0 0 15px;
+        }
+        
+        .corner-ui.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 0 0 15px;
+        }
+        
+        .corner-ui.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+            border-radius: 15px 0 0 0;
+        }
+        
+        .corner-ui.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            border-radius: 15px 0 0 0;
+        }
+        
+        /* Pantalla de carga premium */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, rgba(0, 10, 20, 0.98), rgba(0, 5, 15, 0.95));
+            background: 
+                radial-gradient(ellipse at center, rgba(0, 50, 100, 0.9) 0%, rgba(0, 0, 0, 0.95) 70%),
+                linear-gradient(45deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 100, 255, 0.1) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #00e5ff;
+            color: #00ffff;
             z-index: 2000;
-            backdrop-filter: blur(15px);
-            transition: opacity 1s ease-out;
+            backdrop-filter: blur(10px);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .spinner {
-            border: 4px solid rgba(0, 229, 255, 0.2);
-            border-top: 4px solid #00e5ff;
+        .quantum-loader {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 40px;
+        }
+        
+        .loader-ring {
+            position: absolute;
+            border: 3px solid transparent;
             border-radius: 50%;
+            animation: quantumSpin 2s linear infinite;
+        }
+        
+        .loader-ring:nth-child(1) {
+            width: 120px;
+            height: 120px;
+            border-top: 3px solid #00ffff;
+            border-right: 3px solid #00ffff;
+            animation-duration: 2s;
+        }
+        
+        .loader-ring:nth-child(2) {
+            width: 90px;
+            height: 90px;
+            top: 15px;
+            left: 15px;
+            border-bottom: 3px solid #0080ff;
+            border-left: 3px solid #0080ff;
+            animation-duration: 1.5s;
+            animation-direction: reverse;
+        }
+        
+        .loader-ring:nth-child(3) {
             width: 60px;
             height: 60px;
-            animation: spin 1.5s linear infinite;
-            margin-bottom: 25px;
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
-            position: relative;
+            top: 30px;
+            left: 30px;
+            border-top: 3px solid #ffffff;
+            border-right: 3px solid #ffffff;
+            animation-duration: 1s;
         }
         
-        .spinner::after {
-            content: '';
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            right: -8px;
-            bottom: -8px;
-            border: 2px solid rgba(0, 229, 255, 0.1);
-            border-radius: 50%;
-            animation: spin 3s linear infinite reverse;
-        }
-        
-        @keyframes spin {
+        @keyframes quantumSpin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
-        .loading-text {
-            font-size: 18px;
-            font-weight: 600;
+        .loading-title {
+            font-size: 24px;
+            font-weight: 900;
             text-align: center;
-            animation: glow 2.5s ease-in-out infinite alternate;
-            padding: 0 20px;
-            letter-spacing: 1.5px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00ffff, #ffffff, #00ffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            letter-spacing: 3px;
             text-transform: uppercase;
         }
         
-        .loading-subtext {
+        .loading-subtitle {
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
+            opacity: 0.7;
             text-align: center;
-            max-width: 80%;
-            line-height: 1.5;
+            font-weight: 400;
+            letter-spacing: 1px;
+            animation: fadeInOut 2s ease-in-out infinite alternate;
         }
         
-        @keyframes glow {
-            from { text-shadow: 0 0 10px rgba(0, 229, 255, 0.7); }
-            to { text-shadow: 0 0 20px rgba(0, 229, 255, 0.9), 0 0 30px rgba(0, 229, 255, 0.5); }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
-        /* Mensaje de error - Diseño elegante */
-        .error-message {
+        @keyframes fadeInOut {
+            from { opacity: 0.4; }
+            to { opacity: 0.8; }
+        }
+        
+        /* Mensaje de error elegante */
+        .error-notification {
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 80, 80, 0.9);
+            background: linear-gradient(135deg, rgba(255, 50, 50, 0.9), rgba(200, 0, 0, 0.9));
             color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 100, 100, 0.6);
             z-index: 1001;
             display: none;
             max-width: 90%;
-            width: auto;
-            border: 1px solid rgba(255, 120, 120, 0.8);
             text-align: center;
-            font-weight: 500;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 0 20px rgba(255, 80, 80, 0.3);
-            font-size: 14px;
-            animation: fadeIn 0.5s ease;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 50, 50, 0.4);
+            animation: errorSlideIn 0.5s ease-out;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        @keyframes errorSlideIn {
+            from { 
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
         }
         
-        /* Efectos de partículas */
-        .particle {
-            position: absolute;
-            background: rgba(0, 229, 255, 0.6);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .ar-overlay {
+            .hud-top {
                 top: 15px;
-                padding: 10px 16px;
-                border-radius: 14px;
-                font-size: 12px;
+                padding: 12px 20px;
+                border-radius: 20px;
+                max-width: 85%;
             }
             
-            .ar-instructions {
-                font-size: 10px;
+            .status-indicator { 
+                font-size: 12px; 
+                gap: 10px; 
             }
             
-            .loading-text {
-                font-size: 16px;
+            .hud-instructions { 
+                font-size: 9px; 
             }
             
-            .loading-subtext {
-                font-size: 12px;
+            .loading-title { 
+                font-size: 20px; 
             }
             
-            .error-message {
-                font-size: 12px;
-                padding: 10px 18px;
+            .quantum-loader { 
+                width: 100px; 
+                height: 100px; 
+            }
+            
+            .loader-ring:nth-child(1) { width: 100px; height: 100px; }
+            .loader-ring:nth-child(2) { width: 75px; height: 75px; top: 12.5px; left: 12.5px; }
+            .loader-ring:nth-child(3) { width: 50px; height: 50px; top: 25px; left: 25px; }
+            
+            .corner-ui {
+                width: 40px;
+                height: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hud-top {
+                top: 10px;
+                padding: 10px 15px;
+                max-width: 90%;
+            }
+            
+            .corner-ui {
+                width: 30px;
+                height: 30px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="background-particles"></div>
     
     <div id="loadingScreen" class="loading-screen">
-        <div class="spinner"></div>
-        <div class="loading-text">Inicializando Holograma AR</div>
-        <div class="loading-subtext">Cargando experiencia de realidad aumentada premium</div>
-    </div>
-
-    <div id="arOverlay" class="ar-overlay">
-        <div class="ar-status">
-            <div class="status-dot"></div>
-            <span>HOLOGRAM READY</span>
+        <div class="quantum-loader">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
         </div>
-        <div class="ar-instructions">
-            Move your device to explore | Tap to interact
+        <div class="loading-title">Iniciando Holograma</div>
+        <div class="loading-subtitle">Calibrando matriz cuántica...</div>
+    </div>
+    
+    <div class="ar-hud">
+        <div id="hudTop" class="hud-top" style="opacity: 0;">
+            <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                <span>SISTEMA AR ACTIVO</span>
+            </div>
+            <div class="hud-instructions">
+                🎯 Mantén el dispositivo estable<br>
+                ✨ Toca para interactuar con el holograma
+            </div>
         </div>
+        
+        <div class="corner-ui top-left"></div>
+        <div class="corner-ui top-right"></div>
+        <div class="corner-ui bottom-left"></div>
+        <div class="corner-ui bottom-right"></div>
     </div>
-
-    <div id="errorMessage" class="error-message">
-        ⚠️ Fallback image activated
+    
+    <div id="errorNotification" class="error-notification">
+        ⚠️ Imagen principal no disponible. Activando protocolo de respaldo.
     </div>
-
+    
     <a-scene 
         vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true; alpha: true; precision: high"
+        renderer="logarithmicDepthBuffer: true; alpha: true; precision: high; antialias: true"
         arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; cameraParametersUrl: https://raw.githubusercontent.com/jeromeetienne/ar.js/master/data/data/camera_para.dat"
         embedded>
-
-        <a-entity camera></a-entity>
-
+        
+        <a-entity camera look-controls-enabled="false" wasd-controls-enabled="false"></a-entity>
+        
         <a-assets>
             <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/528237917_24584957491108715_7665513885033589721_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGIf0AfCjIIWGI9nhQ5xhRCupi7oIyAGSa6mLugjIAZJgLGtbil09FM2zd8MQ16ip3N3knwr2gwNv_OAhQFemyI&_nc_ohc=dmOIZtNVZR8Q7kNvwFTnvIg&_nc_oc=AdllEjt0BuEO5H4THkXHs0uJeltxdTm2R-EoNCrTOKBVFYHc0FvIQZdWl3Ff8sMYctljKr8Wyf-QS003frvHF2Om&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=PjxqSGA5S9qWmDDtmiADUQ&oh=00_AfX2Fe5tkT2INDZx-Zh1ByxYjId8DXAo4SRYW9dkT9iNkA&oe=689AB2AF" crossorigin="anonymous">
             <img id="fallbackTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
-            <a-asset-item id="hologramModel" src="https://cdn.jsdelivr.net/gh/aframevr/assets@master/360-image-gallery-boilerplate/img/thumb/placeholder.png"></a-asset-item>
         </a-assets>
-
-        <!-- Holograma central con efectos futuristas -->
-        <a-entity id="hologramContainer" position="0 0 -1.5">
-            <!-- Marco holográfico -->
+        
+        <!-- Contenedor principal del holograma centrado -->
+        <a-entity id="hologramContainer" position="0 0 -1.5" class="interactive">
+            
+            <!-- Imagen principal - Tamaño reducido a 1/3 -->
+            <a-image 
+                id="mainImage"
+                src="#mainTexture"
+                transparent="true"
+                alpha-test="0.05"
+                position="0 0 0"
+                width="0.5"
+                height="0.5"
+                material="transparent: true; alphaTest: 0.05; side: double; shader: flat"
+                animation__float="property: position; to: 0 0.08 0; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
+                animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 25000; easing: linear">
+            </a-image>
+            
+            <!-- Anillo holográfico principal -->
             <a-ring 
                 position="0 0 0"
-                radius-inner="0.35"
-                radius-outer="0.4"
-                color="#00e5ff"
-                material="transparent: true; opacity: 0.4; side: double; shader: flat"
+                radius-inner="0.32"
+                radius-outer="0.36"
+                color="#00ffff"
+                material="transparent: true; opacity: 0.8; side: double; shader: flat"
                 rotation="-90 0 0"
-                animation__glow="property: material.opacity; to: 0.8; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
-                animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 20000; easing: linear">
+                animation__glow="property: material.opacity; to: 1.0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"
+                animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 15000; easing: linear">
             </a-ring>
-
+            
+            <!-- Anillo exterior -->
             <a-ring 
                 position="0 0 0"
                 radius-inner="0.42"
                 radius-outer="0.45"
                 color="#ffffff"
-                material="transparent: true; opacity: 0.1; side: double"
+                material="transparent: true; opacity: 0.4; side: double"
                 rotation="-90 0 0"
-                animation__glow2="property: material.opacity; to: 0.3; dir: alternate; loop: true; dur: 3500; easing: easeInOutSine"
-                animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 15000; easing: linear">
+                animation__glow2="property: material.opacity; to: 0.7; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine"
+                animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 10000; easing: linear">
             </a-ring>
-
-            <!-- Imagen principal (1/3 del tamaño original) -->
-            <a-image 
-                id="mainImage"
-                src="#mainTexture"
-                transparent="true"
-                alpha-test="0.1"
-                position="0 0.05 0"
-                width="0.5"
-                height="0.5"
-                material="transparent: true; alphaTest: 0.1; side: double; shader: flat; metalness: 0.3; roughness: 0.1"
-                animation__float="property: position; to: 0 0.15 0; dir: alternate; loop: true; dur: 6000; easing: easeInOutQuad"
-                animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 30000; easing: linear"
-                animation__scale="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine">
-            </a-image>
-
-            <!-- Efecto de partículas futuristas -->
+            
+            <!-- Anillo interior pulsante -->
+            <a-ring 
+                position="0 0 0"
+                radius-inner="0.25"
+                radius-outer="0.28"
+                color="#0080ff"
+                material="transparent: true; opacity: 0.6; side: double"
+                rotation="-90 0 0"
+                animation__pulse="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1800; easing: easeInOutQuad"
+                animation__spin3="property: rotation; to: -90 720 0; loop: true; dur: 8000; easing: linear">
+            </a-ring>
+            
+            <!-- Efectos de partículas mejorados -->
             <a-entity 
-                particle-system="preset: snow; color: #00e5ff, #ffffff; particleCount: 80; size: 0.03, 0.1; maxAge: 10; accelerationValue: 0 -0.015 0; velocityValue: 0 0 0; accelerationSpread: 0.25 0 0.25; velocitySpread: 0.15 0.15 0.15; opacity: 0.8">
+                particle-system="preset: snow; color: #00ffff, #ffffff, #0080ff; particleCount: 80; size: 0.02, 0.08; maxAge: 12; accelerationValue: 0 -0.01 0; velocityValue: 0 0 0; accelerationSpread: 0.4 0 0.4; velocitySpread: 0.15 0.15 0.15; opacity: 0.8">
             </a-entity>
-
-            <!-- Efecto de borde holográfico -->
-            <a-circle 
-                position="0 0 0.01"
-                radius="0.26"
-                color="#00e5ff"
-                material="transparent: true; opacity: 0.3; side: double; shader: flat"
-                segments="64"
-                animation__pulse="property: material.opacity; to: 0.6; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-            </a-circle>
-
-            <!-- Texto de error (oculto inicialmente) -->
+            
+            <!-- Texto de error elegante -->
             <a-text 
                 id="errorText"
-                value="FALLBACK IMAGE ACTIVATED"
+                value="⚠️ PROTOCOLO DE RESPALDO ACTIVADO\nImagen principal no disponible"
                 position="0 -0.35 0"
                 align="center"
-                color="#ff5555"
+                color="#ff6b6b"
                 width="1.5"
                 visible="false"
-                font="https://cdn.aframe.io/fonts/Roboto-msdf.json"
                 material="transparent: true; opacity: 0.9"
-                animation__blink="property: material.opacity; to: 0.5; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine">
+                animation__blink="property: material.opacity; to: 0.5; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine">
             </a-text>
+            
+            <!-- Efectos de luz adicionales -->
+            <a-entity 
+                geometry="primitive: ring; radiusInner: 0.5; radiusOuter: 0.52"
+                material="color:rgba(0, 255, 255, 0.32); transparent: true; opacity: 0.1; side: double"
+                position="0 0 -0.01"
+                rotation="-90 0 0"
+                animation__expand="property: scale; to: 1.5 1.5 1.5; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
+            </a-entity>
         </a-entity>
-
-        <!-- Iluminación futurista -->
-        <a-entity light="type: ambient; color: #404040; intensity: 0.7"></a-entity>
-        <a-entity light="type: directional; color: #ffffff; intensity: 1.0; castShadow: false" position="0.5 1 0.5"></a-entity>
-        <a-entity light="type: point; color: #00e5ff; intensity: 0.8; distance: 2.5; decay: 1" position="0 0.5 -0.5"
-            animation__pulse="property: light.intensity; to: 1.2; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
-        </a-entity>
-        <a-entity light="type: point; color: #ffffff; intensity: 0.3; distance: 3; decay: 2" position="0 0 -1"></a-entity>
         
-        <!-- Efecto de grid futurista en el suelo -->
-        <a-grid 
-            position="0 -0.5 0"
-            rotation="-90 0 0"
-            width="4"
-            height="4"
-            color="#00e5ff"
-            opacity="0.1"
-            cell-size="0.5"
-            animation__flicker="property: material.opacity; to: 0.05; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine">
-        </a-grid>
+        <!-- Sistema de iluminación avanzado -->
+        <a-entity light="type: ambient; color: #1a1a2e; intensity: 0.6"></a-entity>
+        <a-entity light="type: directional; color: #ffffff; intensity: 1.0; castShadow: false" position="2 3 1"></a-entity>
+        
+        <!-- Luces de acento -->
+        <a-entity 
+            light="type: point; color: #00ffff; intensity: 1.2; distance: 4; decay: 2" 
+            position="0.8 0.5 -1"
+            animation__pulse="property: light.intensity; to: 1.8; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+        </a-entity>
+        
+        <a-entity 
+            light="type: point; color: #0080ff; intensity: 0.8; distance: 3; decay: 2" 
+            position="-0.8 0.5 -1"
+            animation__pulse2="property: light.intensity; to: 1.2; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
+        </a-entity>
+        
     </a-scene>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Holograma Futurista AR - Iniciando experiencia premium...');
-
+            console.log('🚀 Holograma AR Premium - Sistema iniciando...');
+            
+            // Referencias a elementos
             const loadingScreen = document.getElementById('loadingScreen');
-            const arOverlay = document.getElementById('arOverlay');
+            const hudTop = document.getElementById('hudTop');
             const mainImage = document.getElementById('mainImage');
             const errorText = document.getElementById('errorText');
-            const errorMessage = document.getElementById('errorMessage');
+            const errorNotification = document.getElementById('errorNotification');
             
             let imageLoaded = false;
             let fallbackUsed = false;
-            
-            // Efecto de partículas para el fondo
-            function createParticles() {
-                const particleCount = 30;
-                const colors = ['rgba(0, 229, 255, 0.6)', 'rgba(255, 255, 255, 0.4)', 'rgba(150, 255, 255, 0.5)'];
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
-                    
-                    // Posición aleatoria
-                    const x = Math.random() * 100;
-                    const y = Math.random() * 100;
-                    const size = Math.random() * 4 + 1;
-                    
-                    // Estilo de partícula
-                    particle.style.left = `${x}%`;
-                    particle.style.top = `${y}%`;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.opacity = Math.random() * 0.5 + 0.1;
-                    
-                    // Animación
-                    const duration = Math.random() * 20 + 10;
-                    particle.style.animation = `float ${duration}s linear infinite`;
-                    
-                    document.body.appendChild(particle);
-                    
-                    // Animación flotante
-                    const keyframes = `
-                        @keyframes float {
-                            0% { transform: translate(0, 0) rotate(0deg); opacity: ${Math.random() * 0.5 + 0.1}; }
-                            50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(180deg); opacity: ${Math.random() * 0.3 + 0.1}; }
-                            100% { transform: translate(0, 0) rotate(360deg); opacity: ${Math.random() * 0.5 + 0.1}; }
-                        }
-                    `;
-                    
-                    const style = document.createElement('style');
-                    style.innerHTML = keyframes;
-                    document.head.appendChild(style);
-                }
-            }
+            let interactionCount = 0;
             
             /**
-             * Muestra la pantalla de carga y la oculta después de que la escena se carga.
+             * Inicializa la experiencia AR con efectos mejorados
              */
-            function initializeLoadingScreen() {
+            function initializeARExperience() {
                 const scene = document.querySelector('a-scene');
-                scene.addEventListener('loaded', () => {
-                    console.log('🎬 Escena A-Frame cargada. Preparando holograma...');
-                    
-                    // Efecto de carga progresiva
-                    let progress = 0;
-                    const interval = setInterval(() => {
-                        progress += Math.random() * 10;
-                        if (progress >= 100) {
-                            clearInterval(interval);
-                            
-                            setTimeout(() => {
-                                loadingScreen.style.opacity = '0';
-                                arOverlay.style.opacity = '1';
-                                setTimeout(() => {
-                                    loadingScreen.style.display = 'none';
-                                }, 1000);
-                            }, 500);
-                        }
-                    }, 200);
-                });
-            }
-
-            /**
-             * Maneja la carga exitosa de la imagen principal.
-             */
-            function handleImageLoaded() {
-                imageLoaded = true;
-                console.log('✅ Imagen principal cargada correctamente.');
                 
-                // Aplicar efectos de material avanzados
-                if (this.object3D && this.object3D.children[0]) {
-                    const material = this.object3D.children[0].material;
+                scene.addEventListener('loaded', () => {
+                    console.log('🎬 Escena AR cargada - Iniciando secuencia de activación...');
+                    
+                    // Secuencia de carga elegante
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        loadingScreen.style.transform = 'scale(0.8)';
+                        
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            hudTop.style.opacity = '1';
+                            hudTop.style.transform = 'translateX(-50%) translateY(0)';
+                        }, 1500);
+                    }, 3000);
+                });
+                
+                // Optimizaciones para rendimiento
+                scene.setAttribute('stats', 'false');
+                scene.setAttribute('inspector', 'false');
+            }
+            
+            /**
+             * Maneja la carga exitosa de la imagen
+             */
+            function handleImageSuccess() {
+                imageLoaded = true;
+                console.log('✅ Imagen principal cargada - Aplicando efectos cuánticos...');
+                
+                // Efectos adicionales para imagen cargada
+                const image = this;
+                if (image.object3D && image.object3D.children[0]) {
+                    const material = image.object3D.children[0].material;
                     material.transparent = true;
-                    material.alphaTest = 0.1;
-                    material.metalness = 0.3;
-                    material.roughness = 0.1;
+                    material.alphaTest = 0.05;
                     material.needsUpdate = true;
+                    
+                    // Efecto de materialización
+                    image.setAttribute('animation__materialize', 
+                        'property: material.opacity; from: 0; to: 1; dur: 2000; easing: easeOutQuart');
                 }
             }
-
+            
             /**
-             * Maneja los errores de carga de la imagen y cambia a la de respaldo.
+             * Maneja errores de carga con sistema de respaldo elegante
              */
             function handleImageError(imageElement) {
                 if (fallbackUsed) return;
                 
                 fallbackUsed = true;
-                console.warn('❌ Error al cargar imagen principal. Usando respaldo...');
+                console.warn('❌ Error en imagen principal - Activando protocolo de respaldo...');
                 
-                // Cambiar a la imagen de respaldo con transición suave
-                imageElement.setAttribute('animation__fadeout', 'property: material.opacity; to: 0; dur: 500; easing: easeOutQuad');
+                // Cambio suave a imagen de respaldo
+                imageElement.setAttribute('animation__fadeOut', 
+                    'property: material.opacity; to: 0; dur: 500; easing: easeInQuart');
                 
                 setTimeout(() => {
                     imageElement.setAttribute('src', '#fallbackTexture');
-                    imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double; metalness: 0.3; roughness: 0.1');
-                    imageElement.setAttribute('animation__fadein', 'property: material.opacity; to: 1; dur: 800; easing: easeInOutQuad');
+                    imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double');
+                    imageElement.setAttribute('animation__fadeIn', 
+                        'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeOutQuart');
                     
+                    // Mostrar notificaciones
+                    errorText.setAttribute('visible', 'true');
+                    errorNotification.style.display = 'block';
+                    
+                    // Auto-ocultar después de 6 segundos
                     setTimeout(() => {
-                        imageElement.removeAttribute('animation__fadeout');
-                        imageElement.removeAttribute('animation__fadein');
-                    }, 800);
+                        errorText.setAttribute('visible', 'false');
+                        errorNotification.style.display = 'none';
+                    }, 6000);
                 }, 500);
-                
-                // Mostrar mensajes de error con estilo
-                errorText.setAttribute('visible', 'true');
-                errorMessage.style.display = 'block';
-                
-                // Ocultar mensaje de error después de un tiempo
-                setTimeout(() => {
-                    errorText.setAttribute('visible', 'false');
-                }, 5000);
-                
-                setTimeout(() => {
-                    errorMessage.style.opacity = '0';
-                    setTimeout(() => {
-                        errorMessage.style.display = 'none';
-                        errorMessage.style.opacity = '1';
-                    }, 500);
-                }, 4500);
             }
-
+            
             /**
-             * Maneja la interacción del usuario con la imagen.
+             * Maneja interacciones avanzadas del usuario
              */
-            function handleImageInteraction() {
-                console.log('👆 Interacción detectada. Activando efectos especiales...');
+            function handleAdvancedInteraction() {
+                interactionCount++;
+                console.log(`👆 Interacción ${interactionCount} detectada - Activando efectos cuánticos...`);
                 
-                // Efecto de pulsación
-                this.setAttribute('animation__click-scale', 'property: scale; to: 1.15 1.15 1.15; dur: 300; easing: easeOutElastic');
-                this.setAttribute('animation__click-rotate', 'property: rotation; to: 0 15 0; dur: 300; easing: easeOutElastic');
+                const image = this;
+                const container = document.getElementById('hologramContainer');
                 
-                // Efecto de partículas al hacer clic
-                const particles = document.querySelector('[particle-system]');
-                particles.setAttribute('particle-system', 'particleCount: 120');
-                setTimeout(() => {
-                    particles.setAttribute('particle-system', 'particleCount: 80');
-                }, 500);
+                // Efectos de interacción más sofisticados
+                const effects = [
+                    () => {
+                        image.setAttribute('animation__quantum-scale', 
+                            'property: scale; to: 1.3 1.3 1.3; dur: 300; easing: easeOutBack');
+                        setTimeout(() => image.removeAttribute('animation__quantum-scale'), 300);
+                    },
+                    () => {
+                        container.setAttribute('animation__quantum-spin', 
+                            'property: rotation; to: 0 180 0; dur: 800; easing: easeInOutElastic');
+                        setTimeout(() => container.removeAttribute('animation__quantum-spin'), 800);
+                    },
+                    () => {
+                        image.setAttribute('animation__quantum-pulse', 
+                            'property: material.opacity; to: 0.3; dur: 150; dir: alternate; loop: 3; easing: easeInOutQuad');
+                        setTimeout(() => image.removeAttribute('animation__quantum-pulse'), 900);
+                    }
+                ];
                 
-                setTimeout(() => {
-                    this.removeAttribute('animation__click-scale');
-                    this.removeAttribute('animation__click-rotate');
-                }, 300);
+                // Ejecutar efecto aleatorio
+                const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+                randomEffect();
+                
+                // Efecto de ondas en los anillos
+                const rings = container.querySelectorAll('a-ring');
+                rings.forEach((ring, index) => {
+                    setTimeout(() => {
+                        ring.setAttribute('animation__interaction-wave', 
+                            'property: scale; to: 1.2 1.2 1.2; dur: 400; dir: alternate; easing: easeOutQuart');
+                        setTimeout(() => ring.removeAttribute('animation__interaction-wave'), 800);
+                    }, index * 100);
+                });
             }
-
+            
             /**
-             * Optimiza los parámetros para dispositivos móviles.
+             * Optimizaciones específicas para dispositivos móviles
              */
             function applyMobileOptimizations() {
-                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                    console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones...');
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones cuánticas...');
                     
-                    // Reducir partículas y complejidad
+                    // Reducir partículas para mejor rendimiento
                     const particles = document.querySelector('[particle-system]');
                     if (particles) {
-                        particles.setAttribute('particle-system', 'particleCount: 50');
+                        particles.setAttribute('particle-system', 'particleCount: 50; size: 0.02, 0.06');
                     }
                     
-                    // Ajustar tamaño del holograma
-                    mainImage.setAttribute('width', '0.4');
-                    mainImage.setAttribute('height', '0.4');
+                    // Ajustar tamaño de imagen para móviles
+                    mainImage.setAttribute('width', '0.45');
+                    mainImage.setAttribute('height', '0.45');
                     
-                    // Ajustar posición para móviles
-                    document.getElementById('hologramContainer').setAttribute('position', '0 0 -1.2');
+                    // Optimizar animaciones
+                    const rings = document.querySelectorAll('a-ring');
+                    rings.forEach(ring => {
+                        const currentAnimation = ring.getAttribute('animation__spin') || 
+                                               ring.getAttribute('animation__spin2') || 
+                                               ring.getAttribute('animation__spin3');
+                        if (currentAnimation) {
+                            const newDuration = parseInt(currentAnimation.dur) * 1.5;
+                            ring.setAttribute(ring.getAttribute('animation__spin') ? 'animation__spin' : 
+                                            ring.getAttribute('animation__spin2') ? 'animation__spin2' : 'animation__spin3',
+                                            `${currentAnimation}; dur: ${newDuration}`);
+                        }
+                    });
                 }
             }
-
-            /**
-             * Solicita permiso para usar la cámara trasera.
-             */
-            function requestRearCamera() {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
-                
-                console.log('📷 Intentando activar cámara trasera...');
-                
-                navigator.mediaDevices.enumerateDevices()
-                    .then(devices => {
-                        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                        const rearCamera = videoDevices.find(device => 
-                            device.label.toLowerCase().includes('back') || 
-                            device.label.toLowerCase().includes('rear') ||
-                            device.label.toLowerCase().includes('environment')
-                        );
-
-                        const constraints = {
-                            video: {
-                                deviceId: rearCamera ? { exact: rearCamera.deviceId } : undefined,
-                                facingMode: rearCamera ? undefined : { exact: "environment" },
-                                width: { ideal: 1920 },
-                                height: { ideal: 1080 }
-                            }
-                        };
-                        
-                        return navigator.mediaDevices.getUserMedia(constraints)
-                            .then(stream => {
-                                console.log('✅ Cámara trasera activada con éxito.');
-                                return stream;
-                            })
-                            .catch(err => {
-                                console.warn('⚠️ No se pudo acceder a la cámara trasera, intentando frontal:', err);
-                                return navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                            });
-                    })
-                    .then(stream => {
-                        console.log('🎥 Cámara activada:', stream.getVideoTracks()[0].label);
-                    })
-                    .catch(err => {
-                        console.error('❌ Error al acceder a la cámara:', err);
-                    });
-            }
-
-            // --- Inicialización ---
-            createParticles();
-            initializeLoadingScreen();
-            applyMobileOptimizations();
-            requestRearCamera();
-
-            // Event listeners
-            mainImage.addEventListener('materialtextureloaded', handleImageLoaded);
-            mainImage.addEventListener('error', () => handleImageError(mainImage));
-            mainImage.addEventListener('click', handleImageInteraction);
             
-            // Timeout para el manejo de errores de carga
+            /**
+             * Configuración avanzada de cámara
+             */
+            function setupAdvancedCamera() {
+                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                    navigator.mediaDevices.enumerateDevices()
+                        .then(devices => {
+                            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                            const rearCamera = videoDevices.find(device => 
+                                device.label.toLowerCase().includes('back') || 
+                                device.label.toLowerCase().includes('rear') ||
+                                device.label.toLowerCase().includes('environment')
+                            );
+                            
+                            const constraints = {
+                                video: {
+                                    deviceId: rearCamera ? { exact: rearCamera.deviceId } : undefined,
+                                    facingMode: { exact: "environment" },
+                                    width: { ideal: 1920, max: 1920 },
+                                    height: { ideal: 1080, max: 1080 },
+                                    frameRate: { ideal: 30, max: 60 }
+                                }
+                            };
+                            
+                            return navigator.mediaDevices.getUserMedia(constraints);
+                        })
+                        .then(stream => {
+                            console.log('✅ Cámara de alta resolución activada');
+                            // Configurar stream si es necesario
+                        })
+                        .catch(err => {
+                            console.warn('⚠️ Fallback a cámara estándar:', err);
+                            // Fallback a configuración básica
+                            navigator.mediaDevices.getUserMedia({ 
+                                video: { facingMode: "environment" } 
+                            }).catch(e => console.error('❌ Error de cámara:', e));
+                        });
+                }
+            }
+            
+            // --- Inicialización del sistema ---
+            initializeARExperience();
+            applyMobileOptimizations();
+            setupAdvancedCamera();
+            
+            // Event listeners
+            mainImage.addEventListener('materialtextureloaded', handleImageSuccess);
+            mainImage.addEventListener('error', () => handleImageError(mainImage));
+            mainImage.addEventListener('click', handleAdvancedInteraction);
+            mainImage.addEventListener('touchstart', handleAdvancedInteraction);
+            
+            // Timeout de seguridad para carga de imagen
             setTimeout(() => {
                 if (!imageLoaded && !fallbackUsed) {
+                    console.warn('⏰ Timeout de carga - Activando respaldo automático...');
                     handleImageError(mainImage);
                 }
             }, 8000);
-
-            // Manejo de errores globales
+            
+            // Manejo global de errores
             window.addEventListener('error', e => {
-                console.error('⚠️ Error global capturado:', e.message);
+                console.warn('⚠️ Error del sistema capturado:', e.message);
             });
+            
+            // Efectos adicionales al cargar
+            setTimeout(() => {
+                console.log('🌟 Sistema AR Premium completamente inicializado');
+            }, 1000);
         });
     </script>
 </body>
