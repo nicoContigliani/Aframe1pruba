@@ -3,11 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Imagen Flotante AR - Realidad Aumentada</title>
+    <title>Holograma Futurista AR - Experiencia Premium</title>
+    
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
     <style>
+        /* Estilos generales - Diseño futurista premium */
         * {
             margin: 0;
             padding: 0;
@@ -19,7 +22,7 @@
             width: 100vw;
             overflow: hidden;
             background: transparent;
-            font-family: 'Courier New', monospace;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             touch-action: none;
         }
         
@@ -29,80 +32,100 @@
             height: 100% !important;
         }
         
+        /* Overlay AR - Estilo futurista minimalista */
         .ar-overlay {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            color: #00ffff;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 12px 15px;
-            border-radius: 12px;
+            color: #ffffff;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px 20px;
+            border-radius: 16px;
             z-index: 1000;
-            border: 2px solid #00ffff;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+            border: 1px solid rgba(0, 196, 255, 0.5);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
             max-width: 90%;
             width: auto;
             text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.5s ease;
+            opacity: 0;
+            font-size: 14px;
         }
         
         .ar-status {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 8px;
-            font-weight: bold;
-            font-size: 14px;
         }
         
         .status-dot {
             width: 10px;
             height: 10px;
-            background: #00ff00;
+            background: #00ff9d;
             border-radius: 50%;
             animation: pulse 2s infinite;
-            box-shadow: 0 0 10px #00ff00;
+            box-shadow: 0 0 10px #00ff9d;
         }
         
         @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.3); }
-            100% { opacity: 1; transform: scale(1); }
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
         .ar-instructions {
-            font-size: 11px;
-            color: #aaaaaa;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
             line-height: 1.5;
+            letter-spacing: 0.3px;
         }
         
+        /* Pantalla de carga - Diseño futurista premium */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
+            background: linear-gradient(135deg, rgba(0, 10, 20, 0.98), rgba(0, 5, 15, 0.95));
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #00ffff;
+            color: #00e5ff;
             z-index: 2000;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
+            transition: opacity 1s ease-out;
         }
         
         .spinner {
-            border: 4px solid rgba(0, 255, 255, 0.3);
-            border-top: 4px solid #00ffff;
+            border: 4px solid rgba(0, 229, 255, 0.2);
+            border-top: 4px solid #00e5ff;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 25px;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+            position: relative;
+        }
+        
+        .spinner::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 2px solid rgba(0, 229, 255, 0.1);
+            border-radius: 50%;
+            animation: spin 3s linear infinite reverse;
         }
         
         @keyframes spin {
@@ -111,42 +134,71 @@
         }
         
         .loading-text {
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 600;
             text-align: center;
-            animation: glow 2s ease-in-out infinite alternate;
+            animation: glow 2.5s ease-in-out infinite alternate;
             padding: 0 20px;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .loading-subtext {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.5;
         }
         
         @keyframes glow {
-            from { text-shadow: 0 0 10px #00ffff; }
-            to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff; }
+            from { text-shadow: 0 0 10px rgba(0, 229, 255, 0.7); }
+            to { text-shadow: 0 0 20px rgba(0, 229, 255, 0.9), 0 0 30px rgba(0, 229, 255, 0.5); }
         }
         
+        /* Mensaje de error - Diseño elegante */
         .error-message {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 0, 0, 0.9);
+            background: rgba(255, 80, 80, 0.9);
             color: white;
-            padding: 12px 15px;
-            border-radius: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
             z-index: 1001;
             display: none;
             max-width: 90%;
             width: auto;
-            border: 2px solid #ff0000;
+            border: 1px solid rgba(255, 120, 120, 0.8);
             text-align: center;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 20px rgba(255, 80, 80, 0.3);
+            font-size: 14px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        /* Efectos de partículas */
+        .particle {
+            position: absolute;
+            background: rgba(0, 229, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
         }
         
         @media (max-width: 768px) {
             .ar-overlay {
-                top: 10px;
-                padding: 10px 12px;
-            }
-            
-            .ar-status {
+                top: 15px;
+                padding: 10px 16px;
+                border-radius: 14px;
                 font-size: 12px;
             }
             
@@ -155,307 +207,400 @@
             }
             
             .loading-text {
-                font-size: 14px;
+                font-size: 16px;
+            }
+            
+            .loading-subtext {
+                font-size: 12px;
+            }
+            
+            .error-message {
+                font-size: 12px;
+                padding: 10px 18px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Pantalla de carga -->
+    
     <div id="loadingScreen" class="loading-screen">
         <div class="spinner"></div>
-        <div class="loading-text">INICIALIZANDO REALIDAD AUMENTADA...</div>
-        <div style="font-size: 12px; margin-top: 10px; opacity: 0.7;">Cargando recursos 3D...</div>
+        <div class="loading-text">Inicializando Holograma AR</div>
+        <div class="loading-subtext">Cargando experiencia de realidad aumentada premium</div>
     </div>
 
-    <!-- Overlay de información AR -->
-    <div class="ar-overlay">
+    <div id="arOverlay" class="ar-overlay">
         <div class="ar-status">
             <div class="status-dot"></div>
-            <span>REALIDAD AUMENTADA ACTIVA</span>
+            <span>HOLOGRAM READY</span>
         </div>
         <div class="ar-instructions">
-            👆 Toca la pantalla para enfocar<br>
-            📷 Mueve el dispositivo para explorar
+            Move your device to explore | Tap to interact
         </div>
     </div>
 
-    <!-- Mensaje de error -->
     <div id="errorMessage" class="error-message">
-        ⚠️ Error al cargar la imagen principal. Usando imagen de respaldo.
+        ⚠️ Fallback image activated
     </div>
 
-    <!-- Escena A-Frame con AR.js -->
     <a-scene 
         vr-mode-ui="enabled: false"
-        renderer="logarithmicDepthBuffer: true; alpha: true; precision: medium"
+        renderer="logarithmicDepthBuffer: true; alpha: true; precision: high"
         arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; cameraParametersUrl: https://raw.githubusercontent.com/jeromeetienne/ar.js/master/data/data/camera_para.dat"
         embedded>
 
-        <!-- Cámara AR -->
         <a-entity camera></a-entity>
 
-        <!-- Assets -->
         <a-assets>
-            <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
+            <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/528237917_24584957491108715_7665513885033589721_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGIf0AfCjIIWGI9nhQ5xhRCupi7oIyAGSa6mLugjIAZJgLGtbil09FM2zd8MQ16ip3N3knwr2gwNv_OAhQFemyI&_nc_ohc=dmOIZtNVZR8Q7kNvwFTnvIg&_nc_oc=AdllEjt0BuEO5H4THkXHs0uJeltxdTm2R-EoNCrTOKBVFYHc0FvIQZdWl3Ff8sMYctljKr8Wyf-QS003frvHF2Om&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=PjxqSGA5S9qWmDDtmiADUQ&oh=00_AfX2Fe5tkT2INDZx-Zh1ByxYjId8DXAo4SRYW9dkT9iNkA&oe=689AB2AF" crossorigin="anonymous">
             <img id="fallbackTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
+            <a-asset-item id="hologramModel" src="https://cdn.jsdelivr.net/gh/aframevr/assets@master/360-image-gallery-boilerplate/img/thumb/placeholder.png"></a-asset-item>
         </a-assets>
 
-        <!-- Imagen principal centrada y responsive -->
-        <a-image 
-            id="mainImage"
-            src="#mainTexture"
-            transparent="true"
-            alpha-test="0.05"
-            position="0 0 -1"
-            width="0.6"
-            height="0.6"
-            material="transparent: true; alphaTest: 0.05; side: double; shader: standard"
-            animation__float="property: position; to: 0 0.2 -1; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine"
-            animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 25000; easing: linear"
-            animation__scale="property: scale; to: 1.1 1.1 1.1; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
-            shadow="receive: false; cast: true"
-            class="interactive">
-        </a-image>
+        <!-- Holograma central con efectos futuristas -->
+        <a-entity id="hologramContainer" position="0 0 -1.5">
+            <!-- Marco holográfico -->
+            <a-ring 
+                position="0 0 0"
+                radius-inner="0.35"
+                radius-outer="0.4"
+                color="#00e5ff"
+                material="transparent: true; opacity: 0.4; side: double; shader: flat"
+                rotation="-90 0 0"
+                animation__glow="property: material.opacity; to: 0.8; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
+                animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 20000; easing: linear">
+            </a-ring>
 
-        <!-- Anillo holográfico principal centrado -->
-        <a-ring 
-            position="0 0 -1"
-            radius-inner="0.4"
-            radius-outer="0.5"
-            color="#00ffff"
-            material="transparent: true; opacity: 0.5; side: double; shader: standard"
-            rotation="-90 0 0"
-            animation__glow="property: material.opacity; to: 0.9; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine"
-            animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 18000; easing: linear">
-        </a-ring>
+            <a-ring 
+                position="0 0 0"
+                radius-inner="0.42"
+                radius-outer="0.45"
+                color="#ffffff"
+                material="transparent: true; opacity: 0.1; side: double"
+                rotation="-90 0 0"
+                animation__glow2="property: material.opacity; to: 0.3; dir: alternate; loop: true; dur: 3500; easing: easeInOutSine"
+                animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 15000; easing: linear">
+            </a-ring>
 
-        <!-- Anillo holográfico secundario centrado -->
-        <a-ring 
-            position="0 0 -1"
-            radius-inner="0.55"
-            radius-outer="0.6"
-            color="#ffffff"
-            material="transparent: true; opacity: 0.2; side: double"
-            rotation="-90 0 0"
-            animation__glow2="property: material.opacity; to: 0.4; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
-            animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 12000; easing: linear">
-        </a-ring>
+            <!-- Imagen principal (1/3 del tamaño original) -->
+            <a-image 
+                id="mainImage"
+                src="#mainTexture"
+                transparent="true"
+                alpha-test="0.1"
+                position="0 0.05 0"
+                width="0.5"
+                height="0.5"
+                material="transparent: true; alphaTest: 0.1; side: double; shader: flat; metalness: 0.3; roughness: 0.1"
+                animation__float="property: position; to: 0 0.15 0; dir: alternate; loop: true; dur: 6000; easing: easeInOutQuad"
+                animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 30000; easing: linear"
+                animation__scale="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine">
+            </a-image>
 
-        <!-- Partículas ambientales reducidas -->
-        <a-entity 
-            position="0 0 -1"
-            particle-system="preset: snow; color: #00ffff, #ffffff, #88ccff; particleCount: 50; size: 0.05, 0.15; maxAge: 10; accelerationValue: 0 -0.01 0; velocityValue: 0 0 0; accelerationSpread: 0.5 0 0.5; velocitySpread: 0.3 0.3 0.3">
+            <!-- Efecto de partículas futuristas -->
+            <a-entity 
+                particle-system="preset: snow; color: #00e5ff, #ffffff; particleCount: 80; size: 0.03, 0.1; maxAge: 10; accelerationValue: 0 -0.015 0; velocityValue: 0 0 0; accelerationSpread: 0.25 0 0.25; velocitySpread: 0.15 0.15 0.15; opacity: 0.8">
+            </a-entity>
+
+            <!-- Efecto de borde holográfico -->
+            <a-circle 
+                position="0 0 0.01"
+                radius="0.26"
+                color="#00e5ff"
+                material="transparent: true; opacity: 0.3; side: double; shader: flat"
+                segments="64"
+                animation__pulse="property: material.opacity; to: 0.6; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+            </a-circle>
+
+            <!-- Texto de error (oculto inicialmente) -->
+            <a-text 
+                id="errorText"
+                value="FALLBACK IMAGE ACTIVATED"
+                position="0 -0.35 0"
+                align="center"
+                color="#ff5555"
+                width="1.5"
+                visible="false"
+                font="https://cdn.aframe.io/fonts/Roboto-msdf.json"
+                material="transparent: true; opacity: 0.9"
+                animation__blink="property: material.opacity; to: 0.5; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine">
+            </a-text>
         </a-entity>
 
-        <!-- Efectos de luz optimizados -->
-        <a-entity 
-            light="type: ambient; color: #505050; intensity: 0.7">
+        <!-- Iluminación futurista -->
+        <a-entity light="type: ambient; color: #404040; intensity: 0.7"></a-entity>
+        <a-entity light="type: directional; color: #ffffff; intensity: 1.0; castShadow: false" position="0.5 1 0.5"></a-entity>
+        <a-entity light="type: point; color: #00e5ff; intensity: 0.8; distance: 2.5; decay: 1" position="0 0.5 -0.5"
+            animation__pulse="property: light.intensity; to: 1.2; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
         </a-entity>
+        <a-entity light="type: point; color: #ffffff; intensity: 0.3; distance: 3; decay: 2" position="0 0 -1"></a-entity>
         
-        <a-entity 
-            light="type: directional; color: #ffffff; intensity: 1.5; castShadow: true" 
-            position="1 2 0.5">
-        </a-entity>
-        
-        <a-entity 
-            light="type: point; color: #00ffff; intensity: 1.0; distance: 3; decay: 1" 
-            position="0.5 0.5 -0.3"
-            animation__pulse="property: light.intensity; to: 1.5; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
-        </a-entity>
-
-        <!-- Texto de error (oculto por defecto) -->
-        <a-text 
-            id="errorText"
-            value="⚠️ IMAGEN DE RESPALDO CARGADA\nLa imagen principal no pudo cargarse"
-            position="0 -0.3 -1"
-            align="center"
-            color="#ff4444"
-            width="1.8"
-            visible="false"
-            material="transparent: true; opacity: 0.9"
-            animation__blink="property: material.opacity; to: 0.4; dir: alternate; loop: true; dur: 1500; easing: easeInOutSine">
-        </a-text>
+        <!-- Efecto de grid futurista en el suelo -->
+        <a-grid 
+            position="0 -0.5 0"
+            rotation="-90 0 0"
+            width="4"
+            height="4"
+            color="#00e5ff"
+            opacity="0.1"
+            cell-size="0.5"
+            animation__flicker="property: material.opacity; to: 0.05; dir: alternate; loop: true; dur: 5000; easing: easeInOutSine">
+        </a-grid>
     </a-scene>
 
     <script>
-        // Variables globales
-        let imageLoaded = false;
-        let fallbackUsed = false;
-
-        // Configuración inicial
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Iniciando sistema de Realidad Aumentada...');
-            
-            const scene = document.querySelector('a-scene');
+            console.log('🚀 Holograma Futurista AR - Iniciando experiencia premium...');
+
             const loadingScreen = document.getElementById('loadingScreen');
+            const arOverlay = document.getElementById('arOverlay');
             const mainImage = document.getElementById('mainImage');
             const errorText = document.getElementById('errorText');
             const errorMessage = document.getElementById('errorMessage');
             
-            // Configurar renderer para transparencia perfecta
-            scene.addEventListener('loaded', function() {
-                console.log('🎬 Escena A-Frame cargada');
+            let imageLoaded = false;
+            let fallbackUsed = false;
+            
+            // Efecto de partículas para el fondo
+            function createParticles() {
+                const particleCount = 30;
+                const colors = ['rgba(0, 229, 255, 0.6)', 'rgba(255, 255, 255, 0.4)', 'rgba(150, 255, 255, 0.5)'];
                 
-                // Ocultar pantalla de carga con efecto
-                setTimeout(() => {
-                    loadingScreen.style.opacity = '0';
-                    loadingScreen.style.transition = 'opacity 1s ease-out';
-                    setTimeout(() => {
-                        loadingScreen.style.display = 'none';
-                    }, 1000);
-                }, 2000);
-            });
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // Posición aleatoria
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const size = Math.random() * 4 + 1;
+                    
+                    // Estilo de partícula
+                    particle.style.left = `${x}%`;
+                    particle.style.top = `${y}%`;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.opacity = Math.random() * 0.5 + 0.1;
+                    
+                    // Animación
+                    const duration = Math.random() * 20 + 10;
+                    particle.style.animation = `float ${duration}s linear infinite`;
+                    
+                    document.body.appendChild(particle);
+                    
+                    // Animación flotante
+                    const keyframes = `
+                        @keyframes float {
+                            0% { transform: translate(0, 0) rotate(0deg); opacity: ${Math.random() * 0.5 + 0.1}; }
+                            50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(180deg); opacity: ${Math.random() * 0.3 + 0.1}; }
+                            100% { transform: translate(0, 0) rotate(360deg); opacity: ${Math.random() * 0.5 + 0.1}; }
+                        }
+                    `;
+                    
+                    const style = document.createElement('style');
+                    style.innerHTML = keyframes;
+                    document.head.appendChild(style);
+                }
+            }
+            
+            /**
+             * Muestra la pantalla de carga y la oculta después de que la escena se carga.
+             */
+            function initializeLoadingScreen() {
+                const scene = document.querySelector('a-scene');
+                scene.addEventListener('loaded', () => {
+                    console.log('🎬 Escena A-Frame cargada. Preparando holograma...');
+                    
+                    // Efecto de carga progresiva
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 10;
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            
+                            setTimeout(() => {
+                                loadingScreen.style.opacity = '0';
+                                arOverlay.style.opacity = '1';
+                                setTimeout(() => {
+                                    loadingScreen.style.display = 'none';
+                                }, 1000);
+                            }, 500);
+                        }
+                    }, 200);
+                });
+            }
 
-            // Manejo de carga exitosa de imagen
-            mainImage.addEventListener('materialtextureloaded', function() {
-                console.log('✅ Imagen principal cargada correctamente');
+            /**
+             * Maneja la carga exitosa de la imagen principal.
+             */
+            function handleImageLoaded() {
                 imageLoaded = true;
+                console.log('✅ Imagen principal cargada correctamente.');
                 
-                // Configurar material para transparencia
+                // Aplicar efectos de material avanzados
                 if (this.object3D && this.object3D.children[0]) {
                     const material = this.object3D.children[0].material;
                     material.transparent = true;
-                    material.alphaTest = 0.05;
+                    material.alphaTest = 0.1;
+                    material.metalness = 0.3;
+                    material.roughness = 0.1;
                     material.needsUpdate = true;
                 }
-            });
+            }
 
-            // Manejo de errores de imagen
-            mainImage.addEventListener('error', function() {
-                console.warn('❌ Error al cargar imagen principal');
-                handleImageError(this);
-            });
-
-            // Verificar carga de imagen después de un tiempo
-            setTimeout(() => {
-                if (!imageLoaded && !fallbackUsed) {
-                    console.warn('⏰ Timeout de carga, usando imagen de respaldo');
-                    handleImageError(mainImage);
-                }
-            }, 5000);
-
-            // Función para manejar errores de imagen
+            /**
+             * Maneja los errores de carga de la imagen y cambia a la de respaldo.
+             */
             function handleImageError(imageElement) {
-                if (fallbackUsed) return; // Evitar bucle infinito
+                if (fallbackUsed) return;
                 
                 fallbackUsed = true;
-                console.log('🔄 Cambiando a imagen de respaldo...');
+                console.warn('❌ Error al cargar imagen principal. Usando respaldo...');
                 
-                // Cambiar a imagen de respaldo
-                imageElement.setAttribute('src', '#fallbackTexture');
-                imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double');
+                // Cambiar a la imagen de respaldo con transición suave
+                imageElement.setAttribute('animation__fadeout', 'property: material.opacity; to: 0; dur: 500; easing: easeOutQuad');
                 
-                // Mostrar mensajes de error
+                setTimeout(() => {
+                    imageElement.setAttribute('src', '#fallbackTexture');
+                    imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double; metalness: 0.3; roughness: 0.1');
+                    imageElement.setAttribute('animation__fadein', 'property: material.opacity; to: 1; dur: 800; easing: easeInOutQuad');
+                    
+                    setTimeout(() => {
+                        imageElement.removeAttribute('animation__fadeout');
+                        imageElement.removeAttribute('animation__fadein');
+                    }, 800);
+                }, 500);
+                
+                // Mostrar mensajes de error con estilo
                 errorText.setAttribute('visible', 'true');
                 errorMessage.style.display = 'block';
                 
-                // Ocultar mensaje de error después de 8 segundos
+                // Ocultar mensaje de error después de un tiempo
                 setTimeout(() => {
                     errorText.setAttribute('visible', 'false');
-                    errorMessage.style.display = 'none';
-                }, 8000);
-            }
-
-            // Efectos de interactividad mejorados
-            mainImage.addEventListener('click', function() {
-                console.log('👆 Click en imagen detectado');
-                
-                // Efecto de click - escala y rotación
-                this.setAttribute('animation__click', 'property: scale; to: 1.2 1.2 1.2; dur: 300; easing: easeOutElastic');
-                this.setAttribute('animation__clickRotate', 'property: rotation; to: 0 90 0; dur: 300; easing: easeOutQuad');
+                }, 5000);
                 
                 setTimeout(() => {
-                    this.removeAttribute('animation__click');
-                    this.removeAttribute('animation__clickRotate');
-                }, 300);
-            });
+                    errorMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                        errorMessage.style.opacity = '1';
+                    }, 500);
+                }, 4500);
+            }
 
-            // Manejo de errores globales
-            window.addEventListener('error', function(e) {
-                console.warn('⚠️ Error capturado:', e.message);
-            });
-
-            // Optimización para móviles
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones');
+            /**
+             * Maneja la interacción del usuario con la imagen.
+             */
+            function handleImageInteraction() {
+                console.log('👆 Interacción detectada. Activando efectos especiales...');
                 
-                // Reducir calidad de partículas en móviles
+                // Efecto de pulsación
+                this.setAttribute('animation__click-scale', 'property: scale; to: 1.15 1.15 1.15; dur: 300; easing: easeOutElastic');
+                this.setAttribute('animation__click-rotate', 'property: rotation; to: 0 15 0; dur: 300; easing: easeOutElastic');
+                
+                // Efecto de partículas al hacer clic
                 const particles = document.querySelector('[particle-system]');
-                if (particles) {
-                    particles.setAttribute('particle-system', 'particleCount: 30');
-                }
+                particles.setAttribute('particle-system', 'particleCount: 120');
+                setTimeout(() => {
+                    particles.setAttribute('particle-system', 'particleCount: 80');
+                }, 500);
                 
-                // Ajustar tamaño de imagen para móviles
-                mainImage.setAttribute('width', '0.5');
-                mainImage.setAttribute('height', '0.5');
+                setTimeout(() => {
+                    this.removeAttribute('animation__click-scale');
+                    this.removeAttribute('animation__click-rotate');
+                }, 300);
             }
 
-            // Solicitar permiso de cámara trasera
-            function requestRearCamera() {
-                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-                    navigator.mediaDevices.enumerateDevices()
-                        .then(devices => {
-                            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                            if (videoDevices.length > 1) {
-                                console.log('📷 Dispositivos de cámara encontrados:', videoDevices);
-                                
-                                const constraints = {
-                                    video: {
-                                        facingMode: { exact: "environment" },
-                                        width: { ideal: 1280 },
-                                        height: { ideal: 720 }
-                                    }
-                                };
-                                
-                                navigator.mediaDevices.getUserMedia(constraints)
-                                    .then(stream => {
-                                        console.log('✅ Cámara trasera activada');
-                                    })
-                                    .catch(err => {
-                                        console.warn('⚠️ No se pudo acceder a la cámara trasera:', err);
-                                        fallbackToFrontCamera();
-                                    });
-                            } else {
-                                console.log('📷 Solo una cámara disponible, usando esa');
-                                fallbackToFrontCamera();
-                            }
-                        })
-                        .catch(err => {
-                            console.warn('⚠️ Error al enumerar dispositivos:', err);
-                            fallbackToFrontCamera();
-                        });
-                } else {
-                    console.warn('⚠️ API de dispositivos no soportada');
-                    fallbackToFrontCamera();
-                }
-            }
-
-            function fallbackToFrontCamera() {
-                const constraints = {
-                    video: {
-                        facingMode: "user",
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+            /**
+             * Optimiza los parámetros para dispositivos móviles.
+             */
+            function applyMobileOptimizations() {
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    console.log('📱 Dispositivo móvil detectado - Aplicando optimizaciones...');
+                    
+                    // Reducir partículas y complejidad
+                    const particles = document.querySelector('[particle-system]');
+                    if (particles) {
+                        particles.setAttribute('particle-system', 'particleCount: 50');
                     }
-                };
+                    
+                    // Ajustar tamaño del holograma
+                    mainImage.setAttribute('width', '0.4');
+                    mainImage.setAttribute('height', '0.4');
+                    
+                    // Ajustar posición para móviles
+                    document.getElementById('hologramContainer').setAttribute('position', '0 0 -1.2');
+                }
+            }
+
+            /**
+             * Solicita permiso para usar la cámara trasera.
+             */
+            function requestRearCamera() {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
                 
-                navigator.mediaDevices.getUserMedia(constraints)
+                console.log('📷 Intentando activar cámara trasera...');
+                
+                navigator.mediaDevices.enumerateDevices()
+                    .then(devices => {
+                        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                        const rearCamera = videoDevices.find(device => 
+                            device.label.toLowerCase().includes('back') || 
+                            device.label.toLowerCase().includes('rear') ||
+                            device.label.toLowerCase().includes('environment')
+                        );
+
+                        const constraints = {
+                            video: {
+                                deviceId: rearCamera ? { exact: rearCamera.deviceId } : undefined,
+                                facingMode: rearCamera ? undefined : { exact: "environment" },
+                                width: { ideal: 1920 },
+                                height: { ideal: 1080 }
+                            }
+                        };
+                        
+                        return navigator.mediaDevices.getUserMedia(constraints)
+                            .then(stream => {
+                                console.log('✅ Cámara trasera activada con éxito.');
+                                return stream;
+                            })
+                            .catch(err => {
+                                console.warn('⚠️ No se pudo acceder a la cámara trasera, intentando frontal:', err);
+                                return navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                            });
+                    })
                     .then(stream => {
-                        console.log('✅ Cámara frontal activada como respaldo');
+                        console.log('🎥 Cámara activada:', stream.getVideoTracks()[0].label);
                     })
                     .catch(err => {
-                        console.error('❌ No se pudo acceder a ninguna cámara:', err);
+                        console.error('❌ Error al acceder a la cámara:', err);
                     });
             }
 
-            // Solicitar cámara al cargar
+            // --- Inicialización ---
+            createParticles();
+            initializeLoadingScreen();
+            applyMobileOptimizations();
             requestRearCamera();
 
-            // Mensaje de bienvenida
+            // Event listeners
+            mainImage.addEventListener('materialtextureloaded', handleImageLoaded);
+            mainImage.addEventListener('error', () => handleImageError(mainImage));
+            mainImage.addEventListener('click', handleImageInteraction);
+            
+            // Timeout para el manejo de errores de carga
             setTimeout(() => {
-                console.log('🎉 ¡Bienvenido a la experiencia de Realidad Aumentada!');
-            }, 3000);
+                if (!imageLoaded && !fallbackUsed) {
+                    handleImageError(mainImage);
+                }
+            }, 8000);
+
+            // Manejo de errores globales
+            window.addEventListener('error', e => {
+                console.error('⚠️ Error global capturado:', e.message);
+            });
         });
     </script>
 </body>
