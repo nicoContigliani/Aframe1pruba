@@ -324,12 +324,12 @@
     </style>
 </head>
 <body>
-    <!-- Overlay para mejorar visibilidad -->
+     Overlay para mejorar visibilidad 
     <div class="camera-overlay"></div>
-    <!-- Efecto de partículas -->
+     Efecto de partículas 
     <div class="particles"></div>
 
-    <!-- Pantalla de carga -->
+     Pantalla de carga 
     <div id="loadingScreen" class="loading-screen">
         <div class="quantum-loader">
             <div class="loader-ring"></div>
@@ -340,7 +340,7 @@
         <div class="loading-subtitle">Initializing quantum interface...</div>
     </div>
 
-    <!-- HUD de interfaz -->
+     HUD de interfaz 
     <div class="ar-hud">
         <div id="hudPanel" class="hud-panel">
             <div class="status-indicator">
@@ -358,12 +358,12 @@
         <div class="corner-ui bottom-right"></div>
     </div>
 
-    <!-- Notificación de error -->
+     Notificación de error 
     <div id="errorNotification" class="error-notification">
         ⚠️ Backup image activated
     </div>
 
-    <!-- Escena AR -->
+     Escena AR 
     <a-scene
         vr-mode-ui="enabled: false"
         renderer="logarithmicDepthBuffer: true; alpha: true; precision: high; antialias: true"
@@ -374,12 +374,12 @@
         <a-entity camera look-controls wasd-controls-enabled="false"></a-entity>
         <a-assets>
             <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/528237917_24584957491108715_7665513885033589721_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGIf0AfCjIIWGI9nhQ5xhRCupi7oIyAGSa6mLugjIAZJgLGtbil09FM2zd8MQ16ip3N3knwr2gwNv_OAhQFemyI&_nc_ohc=dmOIZtNVZR8Q7kNvwFgYJbF&_nc_oc=AdkNtWGzgMUEnsLfzt8Poe_CwBd3G72W6i2oZQi8Jhvol8MXMATyCmwn41thVTXX6-wK1Nj-P7kv5OI9HUCpsCZ7&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=nPYCCRUOTr0wNPNOHAXaGA&oh=00_AfU1yjWOUZImQkoOq77VV3D0pmiEazerIwhPRfku9nc6vw&oe=689B93AF" crossorigin="anonymous">
-            <img id="fallbackTexture" src="/images/fallback-hologram.png" crossorigin="anonymous">
+            <img id="fallbackTexture" src="/placeholder.svg?height=200&width=200" crossorigin="anonymous">
         </a-assets>
 
-        <!-- Contenedor del holograma -->
+         Contenedor del holograma 
         <a-entity id="hologramContainer" position="0 0 -1.5" class="interactive">
-            <!-- Imagen principal -->
+             Imagen principal 
             <a-image
                 id="mainImage"
                 src="#mainTexture"
@@ -387,13 +387,13 @@
                 alpha-test="0.05"
                 position="0 0 0"
                 width="0.5"
-                height="0.5"
+                height="0.8"  MODIFICADO: Altura ajustada para mejor proporción 
                 material="transparent: true; alphaTest: 0.05; side: double; shader: flat"
                 animation__float="property: position; to: 0 0.08 0; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
                 animation__pulse="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad"
             ></a-image>
 
-            <!-- Anillos holográficos -->
+             Anillos holográficos 
             <a-ring
                 position="0 0 0"
                 radius-inner="0.32"
@@ -425,10 +425,10 @@
                 animation__spin3="property: rotation; to: -90 720 0; loop: true; dur: 8000; easing: linear"
             ></a-ring>
 
-            <!-- Efectos de partículas -->
+             Efectos de partículas 
             <a-entity particle-system="preset: snow; color: #00c8ff, #ffffff, #0088ff; particleCount: 100; size: 0.02, 0.08; maxAge: 12; accelerationValue: 0 -0.01 0; velocityValue: 0 0 0; accelerationSpread: 0.4 0 0.4; velocitySpread: 0.15 0.15 0.15; opacity: 0.9; blending: additive"></a-entity>
 
-            <!-- Texto de error -->
+             Texto de error 
             <a-text
                 id="errorText"
                 value="⚠️ BACKUP IMAGE ACTIVATED"
@@ -440,7 +440,7 @@
                 material="transparent: true; opacity: 0.9"
             ></a-text>
 
-            <!-- Efectos de luz -->
+             Efectos de luz 
             <a-entity
                 geometry="primitive: ring; radiusInner: 0.5; radiusOuter: 0.52"
                 material="color:rgba(0, 200, 255, 0.2); transparent: true; opacity: 0.15; side: double; shader: flat"
@@ -450,11 +450,11 @@
             ></a-entity>
         </a-entity>
 
-        <!-- Sistema de iluminación -->
+         Sistema de iluminación 
         <a-entity light="type: ambient; color: #1a1a2e; intensity: 0.8"></a-entity>
         <a-entity light="type: directional; color: #ffffff; intensity: 1.2; castShadow: false" position="2 3 1"></a-entity>
 
-        <!-- Luces de acento -->
+         Luces de acento 
         <a-entity light="type: point; color: #00c8ff; intensity: 1.5; distance: 4; decay: 2" position="0.8 0.5 -1"
             animation__pulse="property: light.intensity; to: 2.0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"></a-entity>
         <a-entity light="type: point; color: #0088ff; intensity: 1.0; distance: 3; decay: 2" position="-0.8 0.5 -1"
