@@ -343,9 +343,9 @@
                 src="#mainTexture"
                 transparent="true"
                 alpha-test="0.05"
-                position="0 0.2 0"
-                width="0.8"
-                height="1.28"
+                position="0 0.2 0"  <!-- Ajustada posición vertical -->
+                width="0.8"         <!-- Aumentado el ancho -->
+                height="1.28"       <!-- Aumentada la altura manteniendo relación 1:1.6 -->
                 material="transparent: true; alphaTest: 0.05; side: double; shader: flat"
                 animation__float="property: position; to: 0 0.28 0; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
                 animation__pulse="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad"
@@ -411,13 +411,9 @@
     </a-scene>
 
     <script>
-        // Silenciar todos los errores globalmente
-        window.onerror = function(message, source, lineno, colno, error) {
-            console.warn('Error silenciado:', message);
-            return true; // Previene que el error se muestre en la consola del navegador
-        };
-
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 AR Premium Experience - Initializing...');
+
             // Elementos principales
             const loadingScreen = document.getElementById('loadingScreen');
             const hudPanel = document.getElementById('hudPanel');
@@ -431,18 +427,19 @@
             // Inicializar experiencia AR
             function initializeARExperience() {
                 const scene = document.querySelector('a-scene');
-                
-                // Manejar errores silenciosamente en la escena
-                scene.addEventListener('error', function(e) {
-                    console.warn('Error en escena AR:', e.message);
-                    return false;
-                });
-                
-                scene.addEventListener('loaded', function() {
+                scene.addEventListener('loaded', () => {
+                    console.log('🎬 AR Scene loaded - Starting activation sequence...');
+                    
+                    // Prevenir errores silenciosamente
+                    scene.addEventListener('error', (e) => {
+                        console.warn('Scene error:', e.message);
+                        return false;
+                    });
+                    
                     // Secuencia de carga elegante
-                    setTimeout(function() {
+                    setTimeout(() => {
                         loadingScreen.style.opacity = '0';
-                        setTimeout(function() {
+                        setTimeout(() => {
                             loadingScreen.style.display = 'none';
                             hudPanel.style.opacity = '1';
                         }, 1000);
@@ -452,18 +449,15 @@
 
             // Manejar carga exitosa de imagen
             function handleImageSuccess() {
-                try {
-                    imageLoaded = true;
-                    const image = this;
-                    if (image.object3D && image.object3D.children[0]) {
-                        const material = image.object3D.children[0].material;
-                        material.transparent = true;
-                        material.alphaTest = 0.05;
-                        material.needsUpdate = true;
-                        image.setAttribute('animation__materialize', 'property: material.opacity; from: 0; to: 1; dur: 1500; easing: easeOutQuart');
-                    }
-                } catch(e) {
-                    console.warn('Error al cargar imagen:', e.message);
+                imageLoaded = true;
+                console.log('✅ Main image loaded - Applying effects...');
+                const image = this;
+                if (image.object3D && image.object3D.children[0]) {
+                    const material = image.object3D.children[0].material;
+                    material.transparent = true;
+                    material.alphaTest = 0.05;
+                    material.needsUpdate = true;
+                    image.setAttribute('animation__materialize', 'property: material.opacity; from: 0; to: 1; dur: 1500; easing: easeOutQuart');
                 }
             }
 
@@ -472,125 +466,97 @@
                 if (fallbackUsed) return;
                 fallbackUsed = true;
                 
-                try {
-                    // Transición suave a la imagen de respaldo
-                    imageElement.setAttribute('animation__fadeOut', 'property: material.opacity; to: 0; dur: 500; easing: easeInQuart');
-                    setTimeout(function() {
-                        imageElement.setAttribute('src', '#fallbackTexture');
-                        imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double');
-                        imageElement.setAttribute('width', '0.8');
-                        imageElement.setAttribute('height', '0.8');
-                        imageElement.setAttribute('animation__fadeIn', 'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeOutQuart');
-                    }, 500);
-                } catch(e) {
-                    console.warn('Error al cargar imagen de respaldo:', e.message);
-                }
+                console.warn('❌ Main image error - Silently activating backup protocol...');
+                
+                // Transición suave a la imagen de respaldo sin notificaciones
+                imageElement.setAttribute('animation__fadeOut', 'property: material.opacity; to: 0; dur: 500; easing: easeInQuart');
+                setTimeout(() => {
+                    imageElement.setAttribute('src', '#fallbackTexture');
+                    imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double');
+                    imageElement.setAttribute('width', '0.8');
+                    imageElement.setAttribute('height', '0.8'); // Cambiamos a relación 1:1 para el SVG
+                    imageElement.setAttribute('animation__fadeIn', 'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeOutQuart');
+                }, 500);
             }
 
             // Manejar interacciones del usuario
             function handleAdvancedInteraction() {
-                try {
-                    interactionCount++;
-                    const image = this;
-                    const container = document.getElementById('hologramContainer');
+                interactionCount++;
+                console.log(`👆 Interaction ${interactionCount} detected - Triggering effects...`);
+                const image = this;
+                const container = document.getElementById('hologramContainer');
 
-                    // Efectos aleatorios
-                    const effects = [
-                        function() {
-                            image.setAttribute('animation__quantum-scale', 'property: scale; to: 1.15 1.15 1.15; dur: 300; easing: easeOutBack');
-                            setTimeout(function() {
-                                try {
-                                    image.removeAttribute('animation__quantum-scale');
-                                } catch(e) {
-                                    console.warn('Error al remover animación:', e.message);
-                                }
-                            }, 300);
-                        },
-                        function() {
-                            const rings = container.querySelectorAll('a-ring');
-                            rings.forEach(function(ring, index) {
-                                setTimeout(function() {
-                                    try {
-                                        ring.setAttribute('animation__interaction-pulse', 'property: scale; to: 1.2 1.2 1.2; dur: 400; dir: alternate; easing: easeOutQuart');
-                                        setTimeout(function() {
-                                            try {
-                                                ring.removeAttribute('animation__interaction-pulse');
-                                            } catch(e) {
-                                                console.warn('Error al remover animación:', e.message);
-                                            }
-                                        }, 800);
-                                    } catch(e) {
-                                        console.warn('Error al aplicar efecto:', e.message);
-                                    }
-                                }, index * 100);
-                            });
-                        }
-                    ];
-                    
-                    const randomEffect = effects[Math.floor(Math.random() * effects.length)];
-                    randomEffect();
-
-                    // Intensificar partículas
-                    const particles = container.querySelector('[particle-system]');
-                    if (particles) {
-                        try {
-                            particles.setAttribute('particle-system', 'particleCount: 150; size: 0.03, 0.1');
-                            setTimeout(function() {
-                                try {
-                                    particles.setAttribute('particle-system', 'particleCount: 100; size: 0.02, 0.08');
-                                } catch(e) {
-                                    console.warn('Error al resetear partículas:', e.message);
-                                }
-                            }, 1500);
-                        } catch(e) {
-                            console.warn('Error al modificar partículas:', e.message);
-                        }
+                // Efectos aleatorios
+                const effects = [
+                    () => {
+                        image.setAttribute('animation__quantum-scale', 'property: scale; to: 1.15 1.15 1.15; dur: 300; easing: easeOutBack');
+                        setTimeout(() => image.removeAttribute('animation__quantum-scale'), 300);
+                    },
+                    () => {
+                        const rings = container.querySelectorAll('a-ring');
+                        rings.forEach((ring, index) => {
+                            setTimeout(() => {
+                                ring.setAttribute('animation__interaction-pulse', 'property: scale; to: 1.2 1.2 1.2; dur: 400; dir: alternate; easing: easeOutQuart');
+                                setTimeout(() => ring.removeAttribute('animation__interaction-pulse'), 800);
+                            }, index * 100);
+                        });
+                    },
+                    () => {
+                        image.setAttribute('animation__quantum-opacity', 'property: material.opacity; to: 0.5; dur: 150; dir: alternate; loop: 3; easing: easeInOutQuad');
+                        setTimeout(() => image.removeAttribute('animation__quantum-opacity'), 900);
                     }
-                } catch(e) {
-                    console.warn('Error en interacción:', e.message);
+                ];
+                const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+                randomEffect();
+
+                // Intensificar partículas
+                const particles = container.querySelector('[particle-system]');
+                if (particles) {
+                    particles.setAttribute('particle-system', 'particleCount: 150; size: 0.03, 0.1');
+                    setTimeout(() => {
+                        particles.setAttribute('particle-system', 'particleCount: 100; size: 0.02, 0.08');
+                    }, 1500);
                 }
             }
 
             // Optimizaciones para móviles
             function applyMobileOptimizations() {
-                try {
-                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                    if (isMobile) {
-                        hologramContainer.setAttribute('scale', '0.8 0.8 0.8');
-                        const particles = hologramContainer.querySelector('[particle-system]');
-                        if (particles) {
-                            particles.setAttribute('particle-system', 'particleCount: 70; size: 0.02, 0.06');
-                        }
-                    } else {
-                        hologramContainer.setAttribute('scale', '1 1 1');
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (isMobile) {
+                    console.log('📱 Mobile device detected - Applying optimizations...');
+                    hologramContainer.setAttribute('scale', '0.8 0.8 0.8');
+                    const particles = hologramContainer.querySelector('[particle-system]');
+                    if (particles) {
+                        particles.setAttribute('particle-system', 'particleCount: 70; size: 0.02, 0.06');
                     }
-                } catch(e) {
-                    console.warn('Error en optimización móvil:', e.message);
+                } else {
+                    hologramContainer.setAttribute('scale', '1 1 1');
                 }
             }
 
             // Inicialización
-            try {
-                initializeARExperience();
-                applyMobileOptimizations();
+            initializeARExperience();
+            applyMobileOptimizations();
 
-                // Event listeners con manejo silencioso de errores
-                mainImage.addEventListener('materialtextureloaded', handleImageSuccess);
-                mainImage.addEventListener('error', function() {
+            // Event listeners con manejo silencioso de errores
+            mainImage.addEventListener('materialtextureloaded', handleImageSuccess);
+            mainImage.addEventListener('error', () => handleImageError(mainImage), { once: true });
+            mainImage.addEventListener('click', handleAdvancedInteraction);
+            mainImage.addEventListener('touchstart', handleAdvancedInteraction);
+
+            // Timeout para carga de imagen
+            setTimeout(() => {
+                if (!imageLoaded && !fallbackUsed) {
+                    console.warn('⏰ Loading timeout - Silently activating backup...');
                     handleImageError(mainImage);
-                }, { once: true });
-                mainImage.addEventListener('click', handleAdvancedInteraction);
-                mainImage.addEventListener('touchstart', handleAdvancedInteraction);
+                }
+            }, 8000);
 
-                // Timeout para carga de imagen
-                setTimeout(function() {
-                    if (!imageLoaded && !fallbackUsed) {
-                        handleImageError(mainImage);
-                    }
-                }, 8000);
-            } catch(e) {
-                console.warn('Error en inicialización:', e.message);
-            }
+            // Manejo global de errores (solo consola)
+            window.addEventListener('error', function(e) {
+                console.warn('System error:', e.message);
+                return true; // Previene que el error se propague
+            });
         });
     </script>
 </body>
