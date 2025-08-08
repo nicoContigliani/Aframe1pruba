@@ -4,78 +4,58 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Holograma AR Premium</title>
-    
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Orbitron:wght@400;500;600&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Orbitron:wght@400;500;700&display=swap');
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            touch-action: none;
-            position: fixed;
-            font-family: 'Montserrat', sans-serif;
-            background: #000;
+            touch-action: none; /* Evita el scroll y zoom por defecto */
         }
-        
-        /* Video de cámara - Solución definitiva */
-        #arjs-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            z-index: -2;
-        }
-        
-        /* Overlay para contraste */
+
+        /* Overlay elegante para mejorar visibilidad */
         .camera-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: linear-gradient(135deg, rgba(0, 10, 20, 0.6) 0%, rgba(0, 0, 0, 0.5) 100%);
+            background: linear-gradient(135deg, rgba(10, 25, 47, 0.4) 0%, rgba(0, 0, 0, 0.3) 100%);
             z-index: -1;
             pointer-events: none;
         }
-        
-        /* Efecto de partículas minimalista */
+
+        /* Efecto de partículas sutiles */
         .particles {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: 
-                radial-gradient(2px 2px at 20% 30%, rgba(0, 180, 255, 0.3), transparent),
-                radial-gradient(2px 2px at 80% 70%, rgba(0, 180, 255, 0.3), transparent);
+            background: radial-gradient(2px 2px at 20% 30%, rgba(0, 200, 255, 0.4), transparent),
+                        radial-gradient(2px 2px at 80% 70%, rgba(0, 200, 255, 0.4), transparent);
             background-repeat: repeat;
             background-size: 200px 200px;
             animation: particleFlow 40s linear infinite;
-            opacity: 0.5;
+            opacity: 0.6;
             z-index: -1;
             pointer-events: none;
             mix-blend-mode: screen;
         }
-        
         @keyframes particleFlow {
             0% { background-position: 0 0; }
             100% { background-position: 200px 200px; }
         }
-        
+
         /* Escena AR optimizada */
         a-scene {
             width: 100vw !important;
@@ -86,8 +66,8 @@
             left: 0;
             background: transparent !important;
         }
-        
-        /* HUD Ultra Premium */
+
+        /* HUD Premium */
         .ar-hud {
             position: fixed;
             top: 0;
@@ -97,85 +77,62 @@
             pointer-events: none;
             z-index: 1000;
         }
-        
-        /* Panel superior ultra elegante */
+
+        /* Panel superior elegante */
         .hud-panel {
             position: absolute;
             top: 25px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 15, 30, 0.85);
-            border-radius: 20px;
-            padding: 16px 30px;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            color: #fff;
+            background: rgba(10, 25, 47, 0.7);
+            border-radius: 24px;
+            padding: 14px 28px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            color: #ffffff;
             text-align: center;
             font-weight: 500;
-            letter-spacing: 0.8px;
-            font-size: 16px;
+            letter-spacing: 0.5px;
+            font-size: 15px;
             opacity: 0;
             transition: opacity 0.8s ease;
-            border: 1px solid rgba(0, 180, 255, 0.2);
-            max-width: 90%;
+            border: 1px solid rgba(0, 200, 255, 0.3);
         }
-        
-        .status-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        
-        .app-title {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 600;
-            font-size: 18px;
-            margin-bottom: 4px;
-            color: #00b4ff;
-            letter-spacing: 1px;
-        }
-        
         .status-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
-        
         .pulse-dot {
             width: 10px;
             height: 10px;
-            background: #00b4ff;
+            background: #00c8ff;
             border-radius: 50%;
-            box-shadow: 0 0 12px #00b4ff;
+            box-shadow: 0 0 10px #00c8ff;
             animation: pulse 2s infinite ease-in-out;
         }
-        
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.8; box-shadow: 0 0 20px #00b4ff; }
+            50% { transform: scale(1.3); opacity: 0.8; box-shadow: 0 0 15px #00c8ff; }
         }
-        
         .hud-instructions {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.85);
-            line-height: 1.6;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
             font-weight: 400;
-            letter-spacing: 0.5px;
-            max-width: 260px;
-            margin: 0 auto;
+            letter-spacing: 0.3px;
         }
-        
+
         /* Esquinas de diseño premium */
         .corner-ui {
             position: absolute;
             width: 60px;
             height: 60px;
-            border: 1px solid rgba(0, 180, 255, 0.2);
+            border: 1px solid rgba(0, 200, 255, 0.3);
             pointer-events: none;
         }
-        
         .corner-ui.top-left {
             top: 20px;
             left: 20px;
@@ -183,7 +140,6 @@
             border-bottom: none;
             border-radius: 12px 0 0 0;
         }
-        
         .corner-ui.top-right {
             top: 20px;
             right: 20px;
@@ -191,7 +147,6 @@
             border-bottom: none;
             border-radius: 0 12px 0 0;
         }
-        
         .corner-ui.bottom-left {
             bottom: 20px;
             left: 20px;
@@ -199,7 +154,6 @@
             border-top: none;
             border-radius: 0 0 0 12px;
         }
-        
         .corner-ui.bottom-right {
             bottom: 20px;
             right: 20px;
@@ -207,7 +161,7 @@
             border-top: none;
             border-radius: 0 0 12px 0;
         }
-        
+
         /* Pantalla de carga premium */
         .loading-screen {
             position: fixed;
@@ -215,48 +169,43 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(5, 10, 20, 0.98);
+            background: rgba(10, 15, 25, 0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #fff;
+            color: #ffffff;
             z-index: 2000;
             transition: opacity 1.2s ease;
             backdrop-filter: blur(5px);
         }
-        
         .quantum-loader {
             position: relative;
             width: 100px;
             height: 100px;
             margin-bottom: 30px;
         }
-        
         .loader-ring {
             position: absolute;
             border: 2px solid transparent;
             border-radius: 50%;
             animation: spin 2s linear infinite;
         }
-        
         .loader-ring:nth-child(1) {
             width: 100px;
             height: 100px;
-            border-top: 2px solid #00b4ff;
-            border-right: 2px solid #00b4ff;
+            border-top: 2px solid #00c8ff;
+            border-right: 2px solid #00c8ff;
         }
-        
         .loader-ring:nth-child(2) {
             width: 75px;
             height: 75px;
             top: 12.5px;
             left: 12.5px;
-            border-bottom: 2px solid #0077ff;
-            border-left: 2px solid #0077ff;
+            border-bottom: 2px solid #0088ff;
+            border-left: 2px solid #0088ff;
             animation-direction: reverse;
         }
-        
         .loader-ring:nth-child(3) {
             width: 50px;
             height: 50px;
@@ -266,51 +215,46 @@
             border-right: 2px solid #ffffff;
             animation-duration: 1.5s;
         }
-        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
         .loading-title {
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 12px;
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(90deg, #00b4ff, #ffffff, #00b4ff);
+            background: linear-gradient(90deg, #00c8ff, #ffffff, #00c8ff);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradientShift 3s linear infinite;
+            font-family: 'Orbitron', sans-serif;
         }
-        
         .loading-subtitle {
             font-size: 14px;
             opacity: 0.7;
             font-weight: 400;
             animation: fadeInOut 2s ease-in-out infinite alternate;
         }
-        
         @keyframes gradientShift {
             0% { background-position: 0% center; }
             100% { background-position: 200% center; }
         }
-        
         @keyframes fadeInOut {
             from { opacity: 0.6; }
             to { opacity: 0.9; }
         }
-        
+
         /* Notificación de error elegante */
         .error-notification {
             position: fixed;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(200, 50, 50, 0.95);
+            background: rgba(200, 50, 50, 0.9);
             color: white;
-            padding: 14px 28px;
+            padding: 14px 24px;
             border-radius: 12px;
             z-index: 1001;
             display: none;
@@ -318,101 +262,73 @@
             text-align: center;
             font-size: 14px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(200, 50, 50, 0.3);
+            box-shadow: 0 5px 25px rgba(200, 50, 50, 0.3);
             animation: slideIn 0.4s ease-out;
-            border: 1px solid rgba(255, 120, 120, 0.4);
+            border: 1px solid rgba(255, 120, 120, 0.5);
         }
-        
         @keyframes slideIn {
             from { transform: translateX(-50%) translateY(30px); opacity: 0; }
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
-        
+
         /* Responsive para móviles */
         @media (max-width: 768px) {
             .hud-panel {
                 top: 20px;
-                padding: 14px 24px;
-                font-size: 15px;
-                border-radius: 18px;
+                padding: 12px 20px;
+                max-width: 90%;
+                font-size: 14px;
             }
-            
-            .app-title {
-                font-size: 16px;
-            }
-            
             .hud-instructions {
-                font-size: 12px;
+                font-size: 11px;
             }
-            
             .corner-ui {
                 width: 50px;
                 height: 50px;
             }
-            
             .loading-title {
                 font-size: 22px;
             }
-            
             .quantum-loader {
                 width: 80px;
                 height: 80px;
                 margin-bottom: 25px;
             }
-            
             .loader-ring:nth-child(1) { width: 80px; height: 80px; }
             .loader-ring:nth-child(2) { width: 60px; height: 60px; top: 10px; left: 10px; }
             .loader-ring:nth-child(3) { width: 40px; height: 40px; top: 20px; left: 20px; }
         }
-        
         @media (max-width: 480px) {
             .hud-panel {
                 top: 15px;
-                padding: 12px 20px;
-                font-size: 14px;
-                border-radius: 16px;
-            }
-            
-            .app-title {
-                font-size: 15px;
-            }
-            
-            .status-indicator {
+                padding: 10px 16px;
                 font-size: 13px;
+                border-radius: 18px;
             }
-            
             .hud-instructions {
-                font-size: 11px;
-                max-width: 220px;
+                font-size: 10px;
             }
-            
             .corner-ui {
                 width: 40px;
                 height: 40px;
             }
-            
             .loading-title {
                 font-size: 20px;
             }
-            
             .error-notification {
-                padding: 12px 20px;
+                padding: 12px 18px;
                 font-size: 13px;
-                bottom: 25px;
+                bottom: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Video de cámara (manejado por AR.js) -->
-    <video id="arjs-video" autoplay muted playsinline></video>
-    
-    <!-- Overlay para contraste -->
+    <!-- Overlay para mejorar visibilidad -->
     <div class="camera-overlay"></div>
-    
     <!-- Efecto de partículas -->
     <div class="particles"></div>
-    
+
     <!-- Pantalla de carga -->
     <div id="loadingScreen" class="loading-screen">
         <div class="quantum-loader">
@@ -420,56 +336,51 @@
             <div class="loader-ring"></div>
             <div class="loader-ring"></div>
         </div>
-        <div class="loading-title">QUANTUM AR</div>
-        <div class="loading-subtitle">Initializing holographic interface...</div>
+        <div class="loading-title">HOLOGRAM SYSTEM</div>
+        <div class="loading-subtitle">Initializing quantum interface...</div>
     </div>
-    
+
     <!-- HUD de interfaz -->
     <div class="ar-hud">
         <div id="hudPanel" class="hud-panel">
-            <div class="status-container">
-                <div class="app-title">QUANTUM AR</div>
-                <div class="status-indicator">
-                    <div class="pulse-dot"></div>
-                    <span>EXPERIENCE ACTIVE</span>
-                </div>
+            <div class="status-indicator">
+                <div class="pulse-dot"></div>
+                <span>AR EXPERIENCE ACTIVE</span>
             </div>
             <div class="hud-instructions">
-                Focus on a flat surface. Tap to interact with the holographic display.
+                Focus on a flat surface<br>
+                Tap to interact with hologram
             </div>
         </div>
-        
         <div class="corner-ui top-left"></div>
         <div class="corner-ui top-right"></div>
         <div class="corner-ui bottom-left"></div>
         <div class="corner-ui bottom-right"></div>
     </div>
-    
+
     <!-- Notificación de error -->
     <div id="errorNotification" class="error-notification">
-        ⚠️ Backup protocol activated
+        ⚠️ Backup image activated
     </div>
-    
+
     <!-- Escena AR -->
-    <a-scene 
+    <a-scene
         vr-mode-ui="enabled: false"
         renderer="logarithmicDepthBuffer: true; alpha: true; precision: high; antialias: true"
-        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; cameraParametersUrl: https://raw.githubusercontent.com/jeromeetienne/ar.js/master/data/data/camera_para.dat"
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3; cameraParametersUrl: https://raw.githubusercontent.com/jeromeetienne/ar.js/master/data/data/camera_para.dat; facingMode: environment"
         embedded
-        device-orientation-permission-ui>
-        
+        device-orientation-permission-ui
+    >
         <a-entity camera look-controls wasd-controls-enabled="false"></a-entity>
-        
         <a-assets>
-            <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/528237917_24584957491108715_7665513885033589721_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGIf0AfCjIIWGI9nhQ5xhRCupi7oIyAGSa6mLugjIAZJgLGtbil09FM2zd8MQ16ip3N3knwr2gwNv_OAhQFemyI&_nc_ohc=dmOIZtNVZR8Q7kNvwFTnvIg&_nc_oc=AdllEjt0BuEO5H4THkXHs0uJeltxdTm2R-EoNCrTOKBVFYHc0FvIQZdWl3Ff8sMYctljKr8Wyf-QS003frvHF2Om&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=PjxqSGA5S9qWmDDtmiADUQ&oh=00_AfX2Fe5tkT2INDZx-Zh1ByxYjId8DXAo4SRYW9dkT9iNkA&oe=689AB2AF" crossorigin="anonymous">
-            <img id="fallbackTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/474838171_9426793647351680_1267474936689448151_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHMggktZZoWIXOTp4f6gY3K4LTsvs0kb8LgtOy-zSRvwmz3XHNgyBv8fnH8HFv3auaTkhrHrRHdGisnYQSDwobf&_nc_ohc=1wv8ifHe1eoQ7kNvwEJA8JC&_nc_oc=AdkXJtlpW_RdhzORx_Jd05QJPX5o7j-8S4Glxg-LUUssuF2Dk_Y8VeJbpvSawXMJ2o2N0WaXK-qek24qgpCbdJao&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=TZLJQes6eNpbb69H8uY-rA&oh=00_AfXIFlKG-QyQd8Ph0kji0gT_6u8W0SGah0co2b4eP1DRPA&oe=689AA553" crossorigin="anonymous">
+            <img id="mainTexture" src="https://scontent.fmdz7-1.fna.fbcdn.net/v/t39.30808-6/528237917_24584957491108715_7665513885033589721_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeGIf0AfCjIIWGI9nhQ5xhRCupi7oIyAGSa6mLugjIAZJgLGtbil09FM2zd8MQ16ip3N3knwr2gwNv_OAhQFemyI&_nc_ohc=dmOIZtNVZR8Q7kNvwFgYJbF&_nc_oc=AdkNtWGzgMUEnsLfzt8Poe_CwBd3G72W6i2oZQi8Jhvol8MXMATyCmwn41thVTXX6-wK1Nj-P7kv5OI9HUCpsCZ7&_nc_zt=23&_nc_ht=scontent.fmdz7-1.fna&_nc_gid=nPYCCRUOTr0wNPNOHAXaGA&oh=00_AfU1yjWOUZImQkoOq77VV3D0pmiEazerIwhPRfku9nc6vw&oe=689B93AF" crossorigin="anonymous">
+            <img id="fallbackTexture" src="/images/fallback-hologram.png" crossorigin="anonymous">
         </a-assets>
-        
+
         <!-- Contenedor del holograma -->
         <a-entity id="hologramContainer" position="0 0 -1.5" class="interactive">
-            
             <!-- Imagen principal -->
-            <a-image 
+            <a-image
                 id="mainImage"
                 src="#mainTexture"
                 transparent="true"
@@ -479,22 +390,21 @@
                 height="0.5"
                 material="transparent: true; alphaTest: 0.05; side: double; shader: flat"
                 animation__float="property: position; to: 0 0.08 0; dir: alternate; loop: true; dur: 4000; easing: easeInOutSine"
-                animation__pulse="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad">
-            </a-image>
-            
+                animation__pulse="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 2500; easing: easeInOutQuad"
+            ></a-image>
+
             <!-- Anillos holográficos -->
-            <a-ring 
+            <a-ring
                 position="0 0 0"
                 radius-inner="0.32"
                 radius-outer="0.36"
-                color="#00b4ff"
+                color="#00c8ff"
                 material="transparent: true; opacity: 0.8; side: double; shader: flat"
                 rotation="-90 0 0"
                 animation__glow="property: material.opacity; to: 1.0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"
-                animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 15000; easing: linear">
-            </a-ring>
-            
-            <a-ring 
+                animation__spin="property: rotation; to: -90 360 0; loop: true; dur: 15000; easing: linear"
+            ></a-ring>
+            <a-ring
                 position="0 0 0"
                 radius-inner="0.42"
                 radius-outer="0.45"
@@ -502,91 +412,79 @@
                 material="transparent: true; opacity: 0.4; side: double"
                 rotation="-90 0 0"
                 animation__glow2="property: material.opacity; to: 0.7; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine"
-                animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 10000; easing: linear">
-            </a-ring>
-            
-            <a-ring 
+                animation__spin2="property: rotation; to: -90 -360 0; loop: true; dur: 10000; easing: linear"
+            ></a-ring>
+            <a-ring
                 position="0 0 0"
                 radius-inner="0.25"
                 radius-outer="0.28"
-                color="#0077ff"
+                color="#0088ff"
                 material="transparent: true; opacity: 0.6; side: double"
                 rotation="-90 0 0"
                 animation__pulse="property: scale; to: 1.2 1.2 1.2; dir: alternate; loop: true; dur: 1800; easing: easeInOutQuad"
-                animation__spin3="property: rotation; to: -90 720 0; loop: true; dur: 8000; easing: linear">
-            </a-ring>
-            
+                animation__spin3="property: rotation; to: -90 720 0; loop: true; dur: 8000; easing: linear"
+            ></a-ring>
+
             <!-- Efectos de partículas -->
-            <a-entity 
-                particle-system="preset: snow; color: #00b4ff, #ffffff, #0077ff; particleCount: 100; size: 0.02, 0.08; maxAge: 12; accelerationValue: 0 -0.01 0; velocityValue: 0 0 0; accelerationSpread: 0.4 0 0.4; velocitySpread: 0.15 0.15 0.15; opacity: 0.9; blending: additive">
-            </a-entity>
-            
+            <a-entity particle-system="preset: snow; color: #00c8ff, #ffffff, #0088ff; particleCount: 100; size: 0.02, 0.08; maxAge: 12; accelerationValue: 0 -0.01 0; velocityValue: 0 0 0; accelerationSpread: 0.4 0 0.4; velocitySpread: 0.15 0.15 0.15; opacity: 0.9; blending: additive"></a-entity>
+
             <!-- Texto de error -->
-            <a-text 
+            <a-text
                 id="errorText"
-                value="⚠️ BACKUP PROTOCOL ACTIVATED"
+                value="⚠️ BACKUP IMAGE ACTIVATED"
                 position="0 -0.35 0"
                 align="center"
                 color="#ff6b6b"
                 width="1.5"
                 visible="false"
-                material="transparent: true; opacity: 0.9">
-            </a-text>
-            
+                material="transparent: true; opacity: 0.9"
+            ></a-text>
+
             <!-- Efectos de luz -->
-            <a-entity 
+            <a-entity
                 geometry="primitive: ring; radiusInner: 0.5; radiusOuter: 0.52"
-                material="color:rgba(0, 180, 255, 0.2); transparent: true; opacity: 0.15; side: double; shader: flat"
+                material="color:rgba(0, 200, 255, 0.2); transparent: true; opacity: 0.15; side: double; shader: flat"
                 position="0 0 -0.01"
                 rotation="-90 0 0"
-                animation__expand="property: scale; to: 1.3 1.3 1.3; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine">
-            </a-entity>
+                animation__expand="property: scale; to: 1.3 1.3 1.3; dir: alternate; loop: true; dur: 3000; easing: easeInOutSine"
+            ></a-entity>
         </a-entity>
-        
+
         <!-- Sistema de iluminación -->
         <a-entity light="type: ambient; color: #1a1a2e; intensity: 0.8"></a-entity>
         <a-entity light="type: directional; color: #ffffff; intensity: 1.2; castShadow: false" position="2 3 1"></a-entity>
-        
+
         <!-- Luces de acento -->
-        <a-entity 
-            light="type: point; color: #00b4ff; intensity: 1.5; distance: 4; decay: 2" 
-            position="0.8 0.5 -1"
-            animation__pulse="property: light.intensity; to: 2.0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
-        </a-entity>
-        
-        <a-entity 
-            light="type: point; color: #0077ff; intensity: 1.0; distance: 3; decay: 2" 
-            position="-0.8 0.5 -1"
-            animation__pulse2="property: light.intensity; to: 1.5; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine">
-        </a-entity>
+        <a-entity light="type: point; color: #00c8ff; intensity: 1.5; distance: 4; decay: 2" position="0.8 0.5 -1"
+            animation__pulse="property: light.intensity; to: 2.0; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine"></a-entity>
+        <a-entity light="type: point; color: #0088ff; intensity: 1.0; distance: 3; decay: 2" position="-0.8 0.5 -1"
+            animation__pulse2="property: light.intensity; to: 1.5; dir: alternate; loop: true; dur: 2500; easing: easeInOutSine"></a-entity>
     </a-scene>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Quantum AR Experience - Initializing...');
-            
+            console.log('🚀 AR Premium Experience - Initializing...');
+
             // Elementos principales
             const loadingScreen = document.getElementById('loadingScreen');
             const hudPanel = document.getElementById('hudPanel');
             const mainImage = document.getElementById('mainImage');
             const errorText = document.getElementById('errorText');
             const errorNotification = document.getElementById('errorNotification');
-            
+            const hologramContainer = document.getElementById('hologramContainer');
+
             let imageLoaded = false;
             let fallbackUsed = false;
             let interactionCount = 0;
-            
+
             // Inicializar experiencia AR
             function initializeARExperience() {
                 const scene = document.querySelector('a-scene');
-                
                 scene.addEventListener('loaded', () => {
                     console.log('🎬 AR Scene loaded - Starting activation sequence...');
-                    
                     // Secuencia de carga elegante
                     setTimeout(() => {
                         loadingScreen.style.opacity = '0';
-                        
                         setTimeout(() => {
                             loadingScreen.style.display = 'none';
                             hudPanel.style.opacity = '1';
@@ -594,86 +492,71 @@
                     }, 2500);
                 });
             }
-            
+
             // Manejar carga exitosa de imagen
             function handleImageSuccess() {
                 imageLoaded = true;
                 console.log('✅ Main image loaded - Applying effects...');
-                
                 const image = this;
                 if (image.object3D && image.object3D.children[0]) {
                     const material = image.object3D.children[0].material;
                     material.transparent = true;
                     material.alphaTest = 0.05;
                     material.needsUpdate = true;
-                    
-                    image.setAttribute('animation__materialize', 
-                        'property: material.opacity; from: 0; to: 1; dur: 1500; easing: easeOutQuart');
+                    image.setAttribute('animation__materialize', 'property: material.opacity; from: 0; to: 1; dur: 1500; easing: easeOutQuart');
                 }
             }
-            
+
             // Manejar error de imagen con sistema de respaldo
             function handleImageError(imageElement) {
                 if (fallbackUsed) return;
-                
                 fallbackUsed = true;
                 console.warn('❌ Main image error - Activating backup protocol...');
-                
-                imageElement.setAttribute('animation__fadeOut', 
-                    'property: material.opacity; to: 0; dur: 500; easing: easeInQuart');
-                
+                imageElement.setAttribute('animation__fadeOut', 'property: material.opacity; to: 0; dur: 500; easing: easeInQuart');
                 setTimeout(() => {
                     imageElement.setAttribute('src', '#fallbackTexture');
                     imageElement.setAttribute('material', 'transparent: true; alphaTest: 0.1; side: double');
-                    imageElement.setAttribute('animation__fadeIn', 
-                        'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeOutQuart');
-                    
+                    imageElement.setAttribute('animation__fadeIn', 'property: material.opacity; from: 0; to: 1; dur: 1000; easing: easeOutQuart');
                     // Mostrar notificaciones
                     errorText.setAttribute('visible', 'true');
                     errorNotification.style.display = 'block';
-                    
                     setTimeout(() => {
                         errorText.setAttribute('visible', 'false');
                         errorNotification.style.display = 'none';
                     }, 5000);
                 }, 500);
             }
-            
+
             // Manejar interacciones del usuario
             function handleAdvancedInteraction() {
                 interactionCount++;
                 console.log(`👆 Interaction ${interactionCount} detected - Triggering effects...`);
-                
                 const image = this;
                 const container = document.getElementById('hologramContainer');
-                
+
                 // Efectos aleatorios
                 const effects = [
                     () => {
-                        image.setAttribute('animation__quantum-scale', 
-                            'property: scale; to: 1.15 1.15 1.15; dur: 300; easing: easeOutBack');
+                        image.setAttribute('animation__quantum-scale', 'property: scale; to: 1.15 1.15 1.15; dur: 300; easing: easeOutBack');
                         setTimeout(() => image.removeAttribute('animation__quantum-scale'), 300);
                     },
                     () => {
                         const rings = container.querySelectorAll('a-ring');
                         rings.forEach((ring, index) => {
                             setTimeout(() => {
-                                ring.setAttribute('animation__interaction-pulse', 
-                                    'property: scale; to: 1.2 1.2 1.2; dur: 400; dir: alternate; easing: easeOutQuart');
+                                ring.setAttribute('animation__interaction-pulse', 'property: scale; to: 1.2 1.2 1.2; dur: 400; dir: alternate; easing: easeOutQuart');
                                 setTimeout(() => ring.removeAttribute('animation__interaction-pulse'), 800);
                             }, index * 100);
                         });
                     },
                     () => {
-                        image.setAttribute('animation__quantum-opacity', 
-                            'property: material.opacity; to: 0.5; dur: 150; dir: alternate; loop: 3; easing: easeInOutQuad');
+                        image.setAttribute('animation__quantum-opacity', 'property: material.opacity; to: 0.5; dur: 150; dir: alternate; loop: 3; easing: easeInOutQuad');
                         setTimeout(() => image.removeAttribute('animation__quantum-opacity'), 900);
                     }
                 ];
-                
                 const randomEffect = effects[Math.floor(Math.random() * effects.length)];
                 randomEffect();
-                
+
                 // Intensificar partículas
                 const particles = container.querySelector('[particle-system]');
                 if (particles) {
@@ -683,80 +566,34 @@
                     }, 1500);
                 }
             }
-            
+
             // Optimizaciones para móviles
             function applyMobileOptimizations() {
                 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                
                 if (isMobile) {
                     console.log('📱 Mobile device detected - Applying optimizations...');
-                    
-                    const particles = document.querySelector('[particle-system]');
+                    // Escalar el contenedor del holograma para móviles
+                    hologramContainer.setAttribute('scale', '0.8 0.8 0.8'); // Ajusta este valor según sea necesario
+                    const particles = hologramContainer.querySelector('[particle-system]');
                     if (particles) {
                         particles.setAttribute('particle-system', 'particleCount: 70; size: 0.02, 0.06');
                     }
-                    
-                    mainImage.setAttribute('width', '0.45');
-                    mainImage.setAttribute('height', '0.45');
-                    
-                    const rings = document.querySelectorAll('a-ring');
-                    rings.forEach(ring => {
-                        const currentSpinAnimation = ring.getAttribute('animation__spin') || 
-                                                     ring.getAttribute('animation__spin2') || 
-                                                     ring.getAttribute('animation__spin3');
-                        if (currentSpinAnimation) {
-                            const newDuration = parseInt(currentSpinAnimation.match(/dur:\s*(\d+)/)[1]) * 1.5;
-                            ring.setAttribute(currentSpinAnimation.split(';')[0].trim().split(':')[0], 
-                                            `${currentSpinAnimation.replace(/dur:\s*\d+/, `dur: ${newDuration}`)}`);
-                        }
-                    });
+                } else {
+                    // Escala por defecto para escritorio
+                    hologramContainer.setAttribute('scale', '1 1 1');
                 }
             }
-            
-            // Configuración avanzada de cámara
-            function setupAdvancedCamera() {
-                if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-                    navigator.mediaDevices.enumerateDevices()
-                        .then(devices => {
-                            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-                            const rearCamera = videoDevices.find(device => 
-                                device.label.toLowerCase().includes('back') || 
-                                device.label.toLowerCase().includes('rear') ||
-                                device.label.toLowerCase().includes('environment')
-                            );
-                            
-                            const constraints = {
-                                video: {
-                                    deviceId: rearCamera ? { exact: rearCamera.deviceId } : undefined,
-                                    facingMode: { exact: "environment" },
-                                    width: { ideal: 1920, max: 1920 },
-                                    height: { ideal: 1080, max: 1080 },
-                                    frameRate: { ideal: 30, max: 60 }
-                                }
-                            };
-                            
-                            return navigator.mediaDevices.getUserMedia(constraints);
-                        })
-                        .catch(err => {
-                            console.warn('⚠️ Using standard camera:', err);
-                            navigator.mediaDevices.getUserMedia({ 
-                                video: { facingMode: "environment" } 
-                            }).catch(e => console.error('❌ Camera error:', e));
-                        });
-                }
-            }
-            
+
             // Inicialización
             initializeARExperience();
             applyMobileOptimizations();
-            setupAdvancedCamera();
-            
+
             // Event listeners
             mainImage.addEventListener('materialtextureloaded', handleImageSuccess);
             mainImage.addEventListener('error', () => handleImageError(mainImage));
             mainImage.addEventListener('click', handleAdvancedInteraction);
             mainImage.addEventListener('touchstart', handleAdvancedInteraction);
-            
+
             // Timeout para carga de imagen
             setTimeout(() => {
                 if (!imageLoaded && !fallbackUsed) {
@@ -764,7 +601,7 @@
                     handleImageError(mainImage);
                 }
             }, 8000);
-            
+
             // Manejo global de errores
             window.addEventListener('error', e => {
                 console.warn('⚠️ System error:', e.message);
